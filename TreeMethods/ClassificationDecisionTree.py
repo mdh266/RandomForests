@@ -61,16 +61,6 @@ class DecisionTreeClassifier (DecisionTree):
 			**target** (str): 
 				The column name of the target in the dataset.
 
-        :return: Returns a 
-
-        	dictionary: {
-						'splitting_feature': (str) the feature column name 
-											  which the split is chosen on.
-
-						'splitting_value'   :  (float) the value used to split
-											  the data set according the feature.
-						}
-
 		:rtype: dict
         	"""
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
