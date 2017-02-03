@@ -2,7 +2,7 @@
 
 
 ## Intoduction
-I originally started this project to better understand the way decision trees and random forest methods worked.  At this point the code is just a decision tree classifier based off the gini-index, but I am working on extending it to regression trees and random forests.
+I started this project to better understand the way decision trees and random forest methods worked.  At this point the code is just a decision tree classifier based off the gini-index, but I am working on extending it to regression trees and random forests.
 
 ## Dependencies
 The dependencies for this project are rather minimal, including,
