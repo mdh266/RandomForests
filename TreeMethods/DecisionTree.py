@@ -88,14 +88,12 @@ class DecisionTree:
 		0
 	"""
 
-	def __init__(self, 
-                 max_depth=2,
-                 min_size=5):
+	def __init__(self, max_depth=2, min_size=5):
 		"""
         Constructor for a classification decision tree.
 
-     	:param int max_depth: The maximum depth of tree.
-        :param int min_size: The minimum number of datapoints in terminal nodes.
+		:param int max_depth: The maximum depth of tree.
+		:param int min_size: The minimum number of datapoints in terminal nodes.
         """
 		self.max_depth = max_depth
 		self.min_size = min_size
@@ -118,8 +116,7 @@ class DecisionTree:
 		self.n_features = n_features
 
 
-	def predict(self,
-				row):
+	def predict(self, row):
 		"""
 		Predict the class that this datapoint belongs to.
 
@@ -142,10 +139,7 @@ class DecisionTree:
 		# now at a terminal node and get the predtion
 		return curr.val
 
-	def _test_split(self, 
-                    feature, 
-                    value, 
-                    dataset):
+	def _test_split(self, feature, value, dataset):
 		"""
         Split a dataset based on an attribute and an attribute value
     
@@ -203,9 +197,7 @@ class DecisionTree:
 		self._print_tree(self.root,1)
 
 
-	def _print_tree(self, 
-                    node, 
-                    depth):
+	def _print_tree(self, node, depth):
 		"""
         Inner recursive call for printing the tree.
 		

@@ -6,22 +6,16 @@ from DecisionTree import TreeNode
 
 class DecisionTreeClassifier (DecisionTree):
 	
-	def __init__(self, 
-                 max_depth=2,
-                 min_size=5):
+	def __init__(self, max_depth=2, min_size=5):
 		"""
-        Constructor for a classification decision tree.
+		Constructor for a classification decision tree.
 
-     	:param int max_depth: The maximum depth of tree.
-        :param int min_size: The minimum number of datapoints in terminal nodes.
+		:param int max_depth: The maximum depth of tree.
+		:param int min_size: The minimum number of datapoints in terminal nodes.
         """
-		DecisionTree.__init__(self,
-							  max_depth,
-							  min_size)
+		DecisionTree.__init__(self, max_depth, min_size)
 	
-	def fit(self,
-			dataset,
-			target):
+	def fit(self, dataset, target):
 		"""
 		Builds the decsision tree by recursively splitting tree until the
 		the maxmimum depth of the tree is acheived or the nodes have the
@@ -55,18 +49,20 @@ class DecisionTreeClassifier (DecisionTree):
 					1)
 
 
-	def _get_split(self, 
-                   dataset, 
-				   target):
+	def _get_split(self, dataset, target):
 		"""
-        Select the best split point for a dataset using a random
-        selection of the features.
-    
-        :parameters:
-			 dataset:Training data set, needs to be Pandas DataFrame.
-		:param str target: The column name of the target.
-		
+		Select the best split point for a dataset using a random Selection of the features.
+
+		:parameters:
+
+ 			**dataset** (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
+				Training data.
+			
+			**target** (str): 
+				The column name of the target in the dataset.
+
         :return: Returns a 
+
         	dictionary: {
 						'splitting_feature': (str) the feature column name 
 											  which the split is chosen on.
@@ -74,6 +70,7 @@ class DecisionTreeClassifier (DecisionTree):
 						'splitting_value'   :  (float) the value used to split
 											  the data set according the feature.
 						}
+
 		:rtype: dict
         """
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
@@ -101,11 +98,10 @@ class DecisionTreeClassifier (DecisionTree):
 			for index_val_pair in feature_values.iteritems():
 
 				left_group, right_group = self._test_split(feature, 
-										  		  		   index_val_pair[1], 
-										  		  		   dataset)
+										 	index_val_pair[1], 
+										  	dataset)
 
-				gini = self._gini_index(left_group[target],
-										right_group[target])
+				gini = self._gini_index(left_group[target], right_group[target])
 			
 				# if this is the best split update the info
 				if gini < best_score:
@@ -122,9 +118,7 @@ class DecisionTreeClassifier (DecisionTree):
 	
 
 
-	def _gini_index(self, 
-					target_group_1,
-					target_group_2):
+	def _gini_index(self, target_group_1, target_group_2):
 		"""
 		Calculates the Gini index for a split dataset by counting up
 		the percentages of each targets classes in the split groups.
@@ -165,11 +159,7 @@ class DecisionTreeClassifier (DecisionTree):
 		return gini
 
 
-	def _split(self, 
-               curr, 
-			   dataset,
-			   target,
-               depth):
+	def _split(self, curr, dataset, target,	depth):
 		"""
         Recursive splitting function that creates child
         splits for a node or make this node a terminal node.
@@ -191,8 +181,7 @@ class DecisionTreeClassifier (DecisionTree):
 			if left_df.shape[0] <= self.min_size:
 				curr.left = TreeNode(self._make_leaf(left_df[target]))
 			else:
-				curr.left = TreeNode(self._get_split(left_df,
-													target))
+				curr.left = TreeNode(self._get_split(left_df, target))
 
 				self._split(curr.left,
 						left_df,
@@ -203,8 +192,7 @@ class DecisionTreeClassifier (DecisionTree):
 			if right_df.shape[0] <= self.min_size:
 				curr.right = TreeNode(self._make_leaf(right_df[target]))
 			else:
-				curr.right = TreeNode(self._get_split(right_df,
-										target))
+				curr.right = TreeNode(self._get_split(right_df, target))
 
 				self._split(curr.right,
 							right_df,
@@ -212,8 +200,7 @@ class DecisionTreeClassifier (DecisionTree):
 							depth+1)
 		return
 
-	def _make_leaf(self,
-                target_values):
+	def _make_leaf(self, target_values):
 		"""
         Creates a terminal node value by selecting amoung the group that has
         the majority.

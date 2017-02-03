@@ -6,9 +6,7 @@ from TreeMethods.ClassificationDecisionTree import DecisionTreeClassifier
 
 def test_initialization():
 	
-	tree = DecisionTreeClassifier(
-						max_depth=5,
-						min_size=1)
+	tree = DecisionTreeClassifier(max_depth=5, min_size=1)
 
 	assert tree.max_depth == 5
 	assert tree.min_size ==1 
@@ -23,26 +21,22 @@ test_gini_index_data = [
 @pytest.mark.parametrize('series1, series2, expected', test_gini_index_data)
 def test_gini_index(series1, series2, expected):
 	
-	tree = DecisionTreeClassifier(
-						max_depth=5,
-						min_size=1)
+	tree = DecisionTreeClassifier(max_depth=5, min_size=1)
 
 	assert tree._gini_index(series1, series2) == expected
 	
 
 def test_get_split():
 
-	tree = DecisionTreeClassifier(
-						max_depth=5,
-						min_size=2)
+	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
 
 	left = [[1, 2, 3, 0],
-			[1.2, 2, 3, 0],
-			[1.3, 2, 3, 0]]
+		[1.2, 2, 3, 0],
+		[1.3, 2, 3, 0]]
 
 	right = [[2.0, 2, 3, 1],
-			[2.1, 2, 3, 1],
-			[2.5, 2, 3, 1]]
+		[2.1, 2, 3, 1],
+		[2.5, 2, 3, 1]]
 
 	df1 = pd.DataFrame(data=left, columns=['col1','col2','col3','tar'])
 	df2 = pd.DataFrame(data=right, columns=['col1','col2','col3', 'tar'])
@@ -66,9 +60,7 @@ test_make_leaf_data = [
 @pytest.mark.parametrize('series, expected', test_make_leaf_data)
 def test_make_leaf(series, expected):
 
-	tree = DecisionTreeClassifier(
-						max_depth=5,
-						min_size=2)
+	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
 
 	assert tree._make_leaf(series) == expected
 
@@ -76,14 +68,12 @@ def test_make_leaf(series, expected):
 
 def test_split():
 	left = [[1, 2, 3, 0],
-			[1.2, 2, 3, 1],
-			[1.3, 2, 3, 1]]
+		[1.2, 2, 3, 1],
+		[1.3, 2, 3, 1]]
 
 	df1 = pd.DataFrame(data=left, columns=['col1','col2','col3','tar'])
 
-	tree = DecisionTreeClassifier(
-						max_depth=5,
-						min_size=2)
+	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
 
 	node = TreeNode({'splitting_feature':'col1',
 					 'splitting_value':3})
