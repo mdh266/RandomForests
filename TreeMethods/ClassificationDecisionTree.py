@@ -12,7 +12,7 @@ class DecisionTreeClassifier (DecisionTree):
 
 		:param int max_depth: The maximum depth of tree.
 		:param int min_size: The minimum number of datapoints in terminal nodes.
-        """
+		"""
 		DecisionTree.__init__(self, max_depth, min_size)
 	
 	def fit(self, dataset, target):
@@ -72,7 +72,7 @@ class DecisionTreeClassifier (DecisionTree):
 						}
 
 		:rtype: dict
-        """
+        	"""
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
 
 		# the features to test among the split
@@ -130,7 +130,7 @@ class DecisionTreeClassifier (DecisionTree):
 		
 		:return: Returns the gini-index
 		:rtype: float
-        """
+		"""
 
 		gini = 0.0
 		
@@ -161,9 +161,9 @@ class DecisionTreeClassifier (DecisionTree):
 
 	def _split(self, curr, dataset, target,	depth):
 		"""
-        Recursive splitting function that creates child
-        splits for a node or make this node a terminal node.
-        """
+		Recursive splitting function that creates child
+		splits for a node or make this node a terminal node.
+		"""
 		left_df = dataset[dataset[curr.val['splitting_feature']] < curr.val['splitting_value']]
 		right_df = dataset[dataset[curr.val['splitting_feature']] >= curr.val['splitting_value']]
 
@@ -202,13 +202,14 @@ class DecisionTreeClassifier (DecisionTree):
 
 	def _make_leaf(self, target_values):
 		"""
-        Creates a terminal node value by selecting amoung the group that has
-        the majority.
+        	Creates a terminal node value by selecting amoung the group that has
+        	the majority.
     
-        Input:
-        @node - of the decision tree
-    	@targer_values
-        """
+        	Input:
+       		@node - of the decision tree
+    		@target_values.
+    		"""
+
 		# not sure i need this check
 		if len(target_values.unique()) == 1:
 			value = target_values.unique()[0]

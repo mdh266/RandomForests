@@ -69,11 +69,11 @@ class DecisionTree:
 
 	def __init__(self, max_depth=2, min_size=5):
 		"""
-        Constructor for a classification decision tree.
+		Constructor for a classification decision tree.
 
 		:param int max_depth: The maximum depth of tree.
 		:param int min_size: The minimum number of datapoints in terminal nodes.
-        """
+		"""
 		self.max_depth = max_depth
 		self.min_size = min_size
 		self.original_n_features = None
