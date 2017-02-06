@@ -7,8 +7,9 @@ I originally started this project to better understand the way decision trees an
 ## Dependencies
 The dependencies for this project are rather minimal, including,
 
-1. <a href="https://www.python.org/">Python</a>
+1. <a href="https://www.python.org/">Python</a> 2.7
 2. <a href="http://pandas.pydata.org/">Pandas</a>
+3. <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> (for documentation only)
 
 ## Example
 
@@ -34,4 +35,16 @@ The dependencies for this project are rather minimal, including,
 From the main directory run,
 
 	py.test tests
+
+## Documentation
+
+To build the documentation type in terminal from main directory:
+
+<code> sphinx-apidoc -F -o doc/ TreeMethods/ </code>
+
+Then cd into the <code>doc/</code> directory and type,
+
+<code> make html </code>
+
+The html documentation will be in the directory <code>_build/html/</code>.
 
