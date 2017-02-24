@@ -2,7 +2,7 @@
 
 
 ## Intoduction
-I started this project to better understand the way decision trees and random forest methods worked.  At this point the code is just a decision tree classifier based off the gini-index, but I am working on extending it to regression trees and random forests.
+I started this project to better understand the way decision trees and random forest methods work.  At this point the code is just a decision tree classifier based off the gini-index, but I am working on extending it to regression trees and random forests.
 
 ## Dependencies
 The dependencies for this project are rather minimal, including,
@@ -32,13 +32,13 @@ The dependencies for this project are rather minimal, including,
 	0
 
 ## Testing
-From the main directory run,
+To test the code type the following command from the terminal in the <code>main</code> directory,
 
 	*py.test tests*
 
 ## Documentation
 
-To build the documentation type in terminal from main directory:
+To build the documentation on your local machine type the following commands from <code>DecisionTree</code> directory,
 
 * sphinx-apidoc -F -o doc/ TreeMethods/ *
 
@@ -46,5 +46,5 @@ Then cd into the <code>doc/</code> directory and type,
 
 <code> make html </code>
 
-The html documentation will be in the directory <code>_build/html/</code>.
+The html documentation will be in the directory <code>_build/html/</code>.  Open the file <code>inde.html</code>.
 
