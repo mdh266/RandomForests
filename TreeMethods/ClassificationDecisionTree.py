@@ -42,17 +42,13 @@ class DecisionTreeClassifier (DecisionTree):
 		self.columns = dataset.columns
 
 		# Get the first split of the dataset
-		node_value = self._get_split(dataset, 
-							  		target)
+		node_value = self._get_split(dataset, target)
 
 		# Creates the root with val node_value
 		self.root = TreeNode(node_value)
 
 		# Now recursively split the tree
-		self._split(self.root,
-					dataset,
-					target,
-					1)
+		self._split(self.root, dataset, target, 1)
 
 
 	def _get_split(self, dataset, target):
@@ -69,7 +65,7 @@ class DecisionTreeClassifier (DecisionTree):
 
 		:return: Dictionary of the best splitting feature of randomly chosen and the best splitting value.
 		:rtype: dict
-        """
+		"""
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
 
 		# the features to test among the split
@@ -127,7 +123,7 @@ class DecisionTreeClassifier (DecisionTree):
 
 		:return: list [best split value, gini_index for this split value]
 		:rtype: list
-        """
+		"""
 		split_values = dataset[feature]
 		#print split_values.shape[0]
 		gini_values = np.empty(split_values.shape[0])
@@ -206,10 +202,7 @@ class DecisionTreeClassifier (DecisionTree):
 			else:
 				curr.left = TreeNode(self._get_split(left_df, target))
 
-				self._split(curr.left,
-						left_df,
-						target,
-						depth+1)
+				self._split(curr.left,left_df,target,depth+1)
 
 			# process right child
 			if right_df.shape[0] <= self.min_size:
@@ -217,10 +210,7 @@ class DecisionTreeClassifier (DecisionTree):
 			else:
 				curr.right = TreeNode(self._get_split(right_df, target))
 
-				self._split(curr.right,
-							right_df,
-							target,
-							depth+1)
+				self._split(curr.right,right_df,target,depth+1)
 		return
 
 	def _make_leaf(self, target_values):
