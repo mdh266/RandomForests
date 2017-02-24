@@ -102,6 +102,9 @@ class DecisionTree:
 		:parameters:
 			 **row** (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_): 
 				The datapoint to classify.
+
+		:return: The class the data points belong to.
+		:rtype: int
 		"""
 		
 		# check to make sure data point is the right size
@@ -117,27 +120,6 @@ class DecisionTree:
 
 		# now at a terminal node and get the predtion
 		return curr.val
-
-	def _test_split(self, feature, value, dataset):
-		"""
-		Split a dataset based on an attribute and an attribute value
-
-		:param str feature: The feature column name to do the splitting with respect to.
-		:param float value: The splitting value
-		:parm DataFrame dataset: The Pandas DataFrame dataset.
-
-		:return: Returns a list of the split dataset [left dataframe, right dataframe]
-       	
-		:rtype: List of Pandas Dataframes
-		"""
-		# Left data frame which has all data points with the specific feature
-		# values less than value.
-		left = dataset[dataset[feature] < value]
-		# Right data frame which has all data points with the specific feature
-		# values greater than equal to value.
-		right = dataset[dataset[feature] >= value]
-	
-		return [left,right]
 
 	def _to_string(self):
 		"""
@@ -180,8 +162,8 @@ class DecisionTree:
 		"""
 		Inner recursive call for printing the tree.
 		
-		:param TreeNode node: The TreeNode node in the binary tree.
-		:oaram int depth: The depth of this node in the tree.
+		:param: TreeNode node: The TreeNode node in the binary tree.
+		:param: int depth: The depth of this node in the tree.
 		"""
 		if isinstance(node.val, dict):
 			print('%s [%s < %.3f]' % ((depth*' ',

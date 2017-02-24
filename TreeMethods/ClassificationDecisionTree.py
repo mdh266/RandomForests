@@ -3,6 +3,7 @@ import pandas as pd
 
 from DecisionTree import DecisionTree
 from DecisionTree import TreeNode
+import numpy as np
 
 class DecisionTreeClassifier (DecisionTree):
 	
@@ -14,6 +15,8 @@ class DecisionTreeClassifier (DecisionTree):
 		:param int min_size: The minimum number of datapoints in terminal nodes.
 		"""
 		DecisionTree.__init__(self, max_depth, min_size)
+
+		self.columns = None
 	
 	def fit(self, dataset, target):
 		"""
@@ -35,9 +38,12 @@ class DecisionTreeClassifier (DecisionTree):
 		if self.n_features == None:
 			self.n_features = self.original_n_features
 
+		# set the column names 
+		self.columns = dataset.columns
+
 		# Get the first split of the dataset
 		node_value = self._get_split(dataset, 
-							  target)
+							  		target)
 
 		# Creates the root with val node_value
 		self.root = TreeNode(node_value)
@@ -51,7 +57,7 @@ class DecisionTreeClassifier (DecisionTree):
 
 	def _get_split(self, dataset, target):
 		"""
-		Select the best split point for a dataset using a random Selection of the features.
+		Select the best split point and feature for a dataset using a random Selection of the features.
 
 		:parameters:
 
@@ -61,13 +67,17 @@ class DecisionTreeClassifier (DecisionTree):
 			**target** (str): 
 				The column name of the target in the dataset.
 
+		:return: Dictionary of the best splitting feature of randomly chosen and the best splitting value.
 		:rtype: dict
-        	"""
+        """
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
 
 		# the features to test among the split
 		features = list()
-		cols = dataset.columns
+
+		# this is for the testing 
+		if self.columns is None:
+			self.columns = dataset.columns
 
 		# randomily select features to consider 
 		while len(features) < self.n_features:
@@ -76,76 +86,84 @@ class DecisionTreeClassifier (DecisionTree):
 			feature_col = randrange(dataset.shape[1]-1)
  
 			# exclude the target as a possible feature col
-			if cols[feature_col] not in features and cols[feature_col] != target:
-				features.append(cols[feature_col])
+			if self.columns[feature_col] not in features and self.columns[feature_col] != target:
+				features.append(self.columns[feature_col])
 		
+		#print features
 		# loop through the number of features to figure out which
 		# gives the best split.
 		for feature in features:
 			# split the data set according to this feature
 			# and find the splits gini_index
-			feature_values = dataset[feature]
-			for index_val_pair in feature_values.iteritems():
+			#print "feature : " + feature
+			split_val_and_gini_index = self._find_best_split_value(dataset, feature, target)
 
-				left_group, right_group = self._test_split(feature, 
-										 	index_val_pair[1], 
-										  	dataset)
+			gini = split_val_and_gini_index[1]
 
-				gini = self._gini_index(left_group[target], right_group[target])
-			
-				# if this is the best split update the info
-				if gini < best_score:
-					best_feature = feature
-					best_value = index_val_pair[1]
-					best_score = gini
+			# if this is the best split update the info
+			if gini < best_score:
+				best_feature = feature
+				best_value = split_val_and_gini_index[0]
+				best_score = gini
 					#best_groups = [left_group, right_group]
 
 		return {'splitting_feature': best_feature,
                 'splitting_value': best_value}
 
-
-
-	
-
-
-	def _gini_index(self, target_group_1, target_group_2):
+	def _find_best_split_value(self, dataset, feature, target):
 		"""
-		Calculates the Gini index for a split dataset by counting up
-		the percentages of each targets classes in the split groups.
-	
-		:param Series target_group_1: The Panda Series of target values in
-			 group 1 after splitting.
-		:param Series target_group_1: The Panda Series of target values in
-			 group 2 after splitting.
+		Select the best split point in the data set for the specificed features.
+
+		:parameters:
+
+ 			**dataset** (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
+				Training data.
 		
-		:return: Returns the gini-index
+			**feature** (str): 
+				The column name of the feature to perform the search for best split on.s
+
+			**target** (str): 
+				The column name of the target in the dataset.
+
+		:return: list [best split value, gini_index for this split value]
+		:rtype: list
+        """
+		split_values = dataset[feature]
+		#print split_values.shape[0]
+		gini_values = np.empty(split_values.shape[0])
+		gini_values.fill(1) # fill with worst case
+
+		index = 0
+		for i, val in split_values.iteritems():
+			g1 = dataset[dataset[feature] < val][target].value_counts()
+			g2 = dataset[dataset[feature] >= val][target].value_counts()
+			gini_values[index] = self._gini_index([g1,g2])
+			index += 1
+
+		return [split_values[gini_values.argmin()], gini_values.min()]
+
+	def _gini_index(self, array_class_counts):
+		"""
+		Returns the gini-index for the split.
+
+		:paramaters:
+			**array_class_count** (list of Pandas Series): 
+				Each entry in the array contains a pandas series of the the counts in each class
+				for each grouped data points for the split.
+				[ series1: (number belong to class 0, number belonging to class 1) , 
+				  series2: (number belong to class 0, umber belonging to class 1) 
+				 ]
+
+		:return: gini-index of the split
 		:rtype: float
 		"""
+		gini = 0
+		for g in array_class_counts:
+			tot_in_group = float(g.sum())
+			for i, count_in_class in g.iteritems():
+				p = float(count_in_class)/ tot_in_group
+				gini += p*(1-p)
 
-		gini = 0.0
-		
-		if target_group_1.empty is False:
-			# get the percentage of class types in the first group
-			group_1_percentages = target_group_1.value_counts(normalize=True)
-
-			# loop over and get the percentages of the class in this group
-			for class_percent_tupple in group_1_percentages.iteritems():
-				percentage = class_percent_tupple[1]
-				
-				#update gini index
-				gini += percentage * (1 -percentage)
-		
-		if target_group_2.empty is False:
-		# get the percentage of class types in the first group
-			group_2_percentages = target_group_2.value_counts(normalize=True) 
-			
-			# loop over and get the percentages of the class in this gruop
-			for class_percent_tupple in group_2_percentages.iteritems():
-				percentage = class_percent_tupple[1]
-
-				#update gini index
-				gini += percentage * (1 -percentage)
-	
 		return gini
 
 
@@ -153,6 +171,20 @@ class DecisionTreeClassifier (DecisionTree):
 		"""
 		Recursive splitting function that creates child
 		splits for a node or make this node a terminal node.
+
+		:parameters:
+			**curr** (TreeNode): 
+				The current node in the Tree
+
+			**dataset** (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
+				Training data.
+
+			**target** (str): 
+				The column name of the target in the dataset.
+
+			**depth** (int):
+				The depth of node curr.
+		
 		"""
 		left_df = dataset[dataset[curr.val['splitting_feature']] < curr.val['splitting_value']]
 		right_df = dataset[dataset[curr.val['splitting_feature']] >= curr.val['splitting_value']]
@@ -168,6 +200,7 @@ class DecisionTreeClassifier (DecisionTree):
 			curr.right = TreeNode(self._make_leaf(right_df[target]))
 		else:
 			del(dataset)
+			# process right child
 			if left_df.shape[0] <= self.min_size:
 				curr.left = TreeNode(self._make_leaf(left_df[target]))
 			else:
@@ -178,7 +211,7 @@ class DecisionTreeClassifier (DecisionTree):
 						target,
 						depth+1)
 
-			# process left child
+			# process right child
 			if right_df.shape[0] <= self.min_size:
 				curr.right = TreeNode(self._make_leaf(right_df[target]))
 			else:
@@ -192,13 +225,14 @@ class DecisionTreeClassifier (DecisionTree):
 
 	def _make_leaf(self, target_values):
 		"""
-        	Creates a terminal node value by selecting amoung the group that has
-        	the majority.
-    
-        	Input:
-       		@node - of the decision tree
-    		@target_values.
-    		"""
+        Creates a terminal node value by selecting amoung the group that has
+        the majority.
+
+        :param: target_value (Pandas Series): The target values of this data.
+
+        :return: The majority of the class.
+        :rtype: int
+    	"""
 
 		# not sure i need this check
 		if len(target_values.unique()) == 1:

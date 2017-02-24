@@ -16,12 +16,3 @@ ClassificationDecisionTree module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: TreeMethods
-    :members:
-    :undoc-members:
-    :show-inheritance:

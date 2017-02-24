@@ -34,13 +34,13 @@ The dependencies for this project are rather minimal, including,
 ## Testing
 From the main directory run,
 
-	py.test tests
+	*py.test tests*
 
 ## Documentation
 
 To build the documentation type in terminal from main directory:
 
-<code> sphinx-apidoc -F -o doc/ TreeMethods/ </code>
+* sphinx-apidoc -F -o doc/ TreeMethods/ *
 
 Then cd into the <code>doc/</code> directory and type,
 
