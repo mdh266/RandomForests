@@ -11,6 +11,11 @@ The dependencies for this project are rather minimal, including,
 2. <a href="http://pandas.pydata.org/">Pandas</a>
 3. <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> (for documentation only)
 
+You can install all the dependencies using <a href="https://pip.pypa.io/en/stable/">pip</a> (except for python and Sphinx) by entering into the commandline,
+
+	pip install -r requirements.txt
+
+
 ## Example
 
 	>>> dataset = [[2.771244718, 1.784783929, 0],
