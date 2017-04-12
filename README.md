@@ -39,13 +39,13 @@ You can install all the dependencies using <a href="https://pip.pypa.io/en/stabl
 ## Testing
 To test the code type the following command from the terminal in the <code>main</code> directory,
 
-	*py.test tests*
+<code> py.test tests</code>
 
 ## Documentation
 
 To build the documentation on your local machine type the following commands from <code>DecisionTree</code> directory,
 
-* sphinx-apidoc -F -o doc/ TreeMethods/ *
+<code> sphinx-apidoc -F -o doc/ TreeMethods/ </code>
 
 Then cd into the <code>doc/</code> directory and type,
 
