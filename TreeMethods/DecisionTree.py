@@ -79,6 +79,7 @@ class DecisionTree:
 		self.original_n_features = None
 		self.n_features =  None 
 		self.root = None
+		self.columns = None
 
 
 	def set_n_features(self, n_features):
@@ -92,7 +93,7 @@ class DecisionTree:
 			**n_features** (int): 
 				The number of features to choose the split.
 		"""
-		self.n_features = n_features
+		self.n_features = int(n_features)
 
 	def predict(self, row):
 		"""
@@ -128,6 +129,8 @@ class DecisionTree:
 		:return: list of lists of dataframe
 		:rvalue: list
 		"""
+		# set the column names 
+		self.columns = df.columns
 
 		# make new dataset dictionary of lists
 		new_dataset = []
@@ -192,7 +195,7 @@ class DecisionTree:
 			else:
 				curr.right = TreeNode(self._get_split(right_dataset))
 
-				self._split(curr.right,right_df,target,depth+1)
+				self._split(curr.right,right_dataset ,depth+1)
 		return
 
 	def _get_split(self, dataset):

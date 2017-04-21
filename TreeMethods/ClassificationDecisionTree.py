@@ -11,12 +11,11 @@ class DecisionTreeClassifier (DecisionTree):
 		"""
 		Constructor for a classification decision tree.
 
-		:param int max_depth: The maximum depth of tree.
-		:param int min_size: The minimum number of datapoints in terminal nodes.
+		:param: int max_depth The maximum depth of tree.
+		:param:int min_size: The minimum number of datapoints in terminal nodes.
 		"""
 		DecisionTree.__init__(self, max_depth, min_size)
 
-		self.columns = None
 		self.target_values = None
 	
 	def fit(self, dataset, target):
@@ -39,14 +38,11 @@ class DecisionTreeClassifier (DecisionTree):
 		if self.n_features == None:
 			self.n_features = self.original_n_features
 
-		# set the column names 
-		self.columns = dataset.columns
-
 		# Make a new dataset that is list of lists
 		new_dataset = self._convert_to_list(dataset,target)
 
 		# get all the targe values
-		self.target_values = list(set(row[-1] for row in dataset))
+		self.target_values = list(set(row[-1] for row in new_dataset))
 
 		# Get the first split of the dataset
 		node_value = self._get_split(new_dataset)
@@ -54,9 +50,8 @@ class DecisionTreeClassifier (DecisionTree):
 		# Creates the root with val node_value
 		self.root = TreeNode(node_value)
 
-
 		# Now recursively split the tree
-		self._split(self.root, dataset, 1)
+		self._split(self.root, new_dataset, 1)
 
 	def _error(self, groups):
 		return self._gini_index(groups)
