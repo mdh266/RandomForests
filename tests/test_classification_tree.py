@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from TreeMethods.DecisionTree import TreeNode
+#from TreeMethods.DecisionTree import TreeNode
 from TreeMethods.ClassificationDecisionTree import DecisionTreeClassifier
 
 def test_initialization():
@@ -13,58 +13,52 @@ def test_initialization():
 
 
 test_gini_index_data = [
-(pd.Series([2,2]), pd.Series([3,3]), 1.0),
-(pd.Series([1]), pd.Series([5]), 0.0),
-(pd.Series([1,3]), pd.Series([3,1]), 0.75)
+([[1,1,0], [1,1,0]], [[1,1,1], [1,1,1]], 0.0),
+([[1,1,1], [1,1,0]], [[1,1,0], [1,1,1]], 1.0)
 ]
 
-@pytest.mark.parametrize('series1, series2, expected', test_gini_index_data)
-def test_gini_index(series1, series2, expected):
+@pytest.mark.parametrize('df1, df2, expected', test_gini_index_data)
+def test_gini_index(df1, df2, expected):
 	
 	tree = DecisionTreeClassifier(max_depth=5, min_size=1)
+	tree.target_values = [0,1]
+	assert tree._gini_index([df1, df2]) == expected
 
-	assert tree._gini_index([series1, series2]) == expected
-
-
-test_make_leaf_data = [
-(pd.Series([0,0,0,1,1,1,1]), 1),
-(pd.Series([4,5,4,4,4,5]), 4)
-]
-
-@pytest.mark.parametrize('series, expected', test_make_leaf_data)
-def test_make_leaf(series, expected):
-
-	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
-
-	assert tree._make_leaf(series) == expected
 
 
 def test_get_split():
-
 	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
 
-	left = [[1, 2, 3, 0],
+	df = [[1, 2, 3, 0],
 		[1.2, 2, 3, 0],
-		[1.3, 2, 3, 0]]
-
-	right = [[2.0, 2, 3, 1],
+		[1.3, 2, 3, 0],
+		[2.0, 2, 3, 1],
 		[2.1, 2, 3, 1],
 		[2.5, 2, 3, 1]]
 
-	df1 = pd.DataFrame(data=left, columns=['col1','col2','col3','tar'])
-	df2 = pd.DataFrame(data=right, columns=['col1','col2','col3', 'tar'])
-
-	df = pd.concat([df1,df2])
-	df = df.reset_index(drop=True)
 	tree.set_n_features(3)
+	tree.columns = ['col1','col2','col3']
+	tree.target_values = [0,1]
 
-	result = tree._get_split(df, 'tar')
+	result = tree._get_split(df)
 
-	print result
-
+	assert result['splitting_col'] == 0
 	assert result['splitting_feature'] == 'col1'
 	assert result['splitting_value'] == 2.0
 
+
+test_make_leaf_data = [
+([[3,0],[3,0],[3,0],[3,1],[3,1],[3,1],[3,1]], 1)
+]
+
+@pytest.mark.parametrize('df, expected', test_make_leaf_data)
+def test_make_leaf(df, expected):
+
+	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
+
+	tree.target_values = [0,1]
+
+	assert tree._make_leaf(df) == expected
 
 test_predict_data = [
 (pd.Series([2.0, 23.0], index=['col1','col2']), 0),
@@ -93,4 +87,3 @@ def test_predict(row, expected):
 	tree = DecisionTreeClassifier(2,1)
 	tree.fit(df,target='tar')
 	
-	assert tree.predict(row) == expected

@@ -1,4 +1,4 @@
-from random import randrange  
+from random import randint 
 import pandas as pd
 
 
@@ -94,13 +94,11 @@ class DecisionTree:
 		"""
 		self.n_features = n_features
 
-
 	def predict(self, row):
 		"""
 		Predict the class that this datapoint belongs to.
 
-		:parameters:
-			 **row** (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_): 
+		:param: row (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_): 
 				The datapoint to classify.
 
 		:return: The class the data points belong to.
@@ -120,6 +118,148 @@ class DecisionTree:
 
 		# now at a terminal node and get the predtion
 		return curr.val
+
+	def _convert_to_list(self, df, target):
+		"""
+		Converts list Pandas dataframe to list of lists.
+
+		:param: df (DataFrame): Pandas DataFrame
+		:param: target (target): The target name
+		:return: list of lists of dataframe
+		:rvalue: list
+		"""
+
+		# make new dataset dictionary of lists
+		new_dataset = []
+
+		targets = df[target]
+		df = df.drop(target,axis=1)
+
+		# loop over each row and convert from Pandas Series to list
+		for row in df.iterrows():
+			new_dataset.append(row[1].tolist())
+
+		for i in range(len(new_dataset)):
+			new_dataset[i].append(targets[i])
+
+		return new_dataset
+
+	def _split(self, curr, dataset,	depth):
+		"""
+		Recursive splitting function that creates child
+		splits for a node or make this node a terminal node.
+
+		:parameters:
+			**curr** (TreeNode): 
+				The current node in the Tree
+
+			**dataset** (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
+				Training data.
+
+			**target** (str): 
+				The column name of the target in the dataset.
+
+			**depth** (int):
+				The depth of node curr.
+		
+		"""
+		left_dataset, right_dataset = self._split_dataset(dataset,
+														curr.val['splitting_col'],
+														curr.val['splitting_value'])
+
+		# check if either split dataset is empty
+		if len(left_dataset) == 0 or len(right_dataset) == 0:
+			curr.val = self._make_leaf(dataset)
+			del(dataset)
+		# deal with tree being at max_depth
+		elif depth >= self.max_depth:
+			del(dataset)
+			curr.left = TreeNode(self._make_leaf(left_dataset))
+			curr.right = TreeNode(self._make_leaf(right_dataset))
+		else:
+			del(dataset)
+			# process right child
+			if len(left_dataset) <= self.min_size:
+				curr.left = TreeNode(self._make_leaf(left_dataset))
+			else:
+				curr.left = TreeNode(self._get_split(left_dataset))
+
+				self._split(curr.left, left_dataset, depth+1)
+
+			# process right child
+			if len(right_dataset) <= self.min_size:
+				curr.right = TreeNode(self._make_leaf(right_dataset))
+			else:
+				curr.right = TreeNode(self._get_split(right_dataset))
+
+				self._split(curr.right,right_df,target,depth+1)
+		return
+
+	def _get_split(self, dataset):
+		"""
+		Select the best split point and feature for a dataset using a random Selection of the features.
+
+		:param: dataset (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
+				Training data.
+			
+		:param: target (str): 
+				The column name of the target in the dataset.
+
+		:return: Dictionary of the best splitting feature of randomly chosen and the best splitting value.
+		:rtype: dict
+		"""
+		best_feature, best_value, best_score, best_groups = 999,999,999,None
+
+		# the features to test among the split
+		features = list()
+
+		# randomily select features to consider 
+		while len(features) < self.n_features:
+
+			# out of all the features
+			feature_col = randint(0, self.n_features-1)
+ 
+			# exclude the target as a possible feature col
+			if feature_col not in features:
+				features.append(feature_col)
+		
+		#print features
+		# loop through the number of features to figure out which
+		# gives the best split.
+		for feature in features:
+			# split the data set according to this feature
+			# and find the splits gini_index
+			#print "feature : " + feature
+			for row in dataset:
+				split_val = row[feature]
+				groups = self._split_dataset(dataset, feature, split_val)
+
+				error = self._error(groups)
+
+				# if this is the best split update the info
+				if error < best_score:
+					best_col = feature
+					best_value = split_val
+					best_score = error
+					#best_groups = [left_group, right_group]
+
+		return {'splitting_col': best_col,
+				'splitting_feature': self.columns[best_col],
+                'splitting_value': best_value}
+
+	def _split_dataset(self, dataset, feature, value):
+		"""
+		"""
+
+		left_dataset, right_dataset = list(), list()
+
+		for row in dataset:
+			if row[feature] < value:
+				left_dataset.append(row)
+			else:
+				right_dataset.append(row)
+
+		return left_dataset, right_dataset
 
 	def _to_string(self):
 		"""
