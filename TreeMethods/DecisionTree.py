@@ -5,29 +5,14 @@ import pandas as pd
 class TreeNode:
 	"""
 	TreeNode is a class used to build a binary decison tree.
-
-	:Parameters:
-		**value** (dict or int): 
-			If the node is a leaf, value is the predicted class otherwise it's a dictionary.
-		
-
-	:Attributes: 
-
-		**val** (dict or int): 
-			If the node is a leaf, val is the predicted class otherwise it's a dictionary.
-	
-	 	**left** (:class:`TreeNode`): 
-			The left child.
-
-		**right** (:class:`TreeNode`): 
-			The right child.
 		
 	"""
 	def __init__(self, value):
 		"""
 		Constructor for TreeNode in the decision tree. 
 	
-		:param dict or int value: If the node is a leaf, value is the predicted class otherwise it's a dictionary.
+		Args:
+			value (dict or int) : If the node is a leaf, value is the predicted class otherwise it's a dictionary.
 		"""
 		# dictionary if not terminal node, otherwise it it the class value.
 		self.val = value
@@ -43,12 +28,6 @@ class DecisionTree:
 	"""
 	A decision tree classifier based off the gini-index.
 	
-	:Parameters:
-		**max_depth** (int):
-			The maximum depth of tree.
-
-		**min_size** (int):
-			The minimum number of datapoints in terminal nodes.
 		
 	:Attributes: 
 		**max_depth** (int): 
@@ -71,8 +50,9 @@ class DecisionTree:
 		"""
 		Constructor for a classification decision tree.
 
-		:param int max_depth: The maximum depth of tree.
-		:param int min_size: The minimum number of datapoints in terminal nodes.
+		Kargs: 
+			max_depth (int) : The maximum depth of tree.
+			min_size (int) : The minimum number of datapoints in terminal nodes.
 		"""
 		self.max_depth = max_depth
 		self.min_size = min_size
@@ -89,21 +69,21 @@ class DecisionTree:
 		be using this class from a Random Forest.
 
 		
-		:parameters:
-			**n_features** (int): 
-				The number of features to choose the split.
+		Args:
+			n_features (int) : The number of features to choose the split.
 		"""
 		self.n_features = int(n_features)
 
-	def predict(self, row):
+	def _predict(self, row):
 		"""
-		Predict the class that this datapoint belongs to.
+		Predicts the target value that this datapoint belongs to.
 
-		:param: row (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_): 
+		Args:
+			row (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_) : 
 				The datapoint to classify.
 
-		:return: The class the data points belong to.
-		:rtype: int
+		Returns:
+			int. The leaf value of the data point.
 		"""
 		
 		# check to make sure data point is the right size
@@ -124,10 +104,12 @@ class DecisionTree:
 		"""
 		Converts list Pandas dataframe to list of lists.
 
-		:param: df (DataFrame): Pandas DataFrame
-		:param: target (target): The target name
-		:return: list of lists of dataframe
-		:rvalue: list
+		Args:
+			df (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : Pandas DataFrame
+			target (str) : The target name
+
+		Returns: 
+			list. list of lists representation of dataframe
 		"""
 		# set the column names 
 		self.columns = df.columns
@@ -152,19 +134,12 @@ class DecisionTree:
 		Recursive splitting function that creates child
 		splits for a node or make this node a terminal node.
 
-		:parameters:
-			**curr** (TreeNode): 
-				The current node in the Tree
+		Args:
+			curr (TreeNode): The current node in the Tree
 
-			**dataset** (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
-				Training data.
+			dataset (list): Training data.
 
-			**target** (str): 
-				The column name of the target in the dataset.
-
-			**depth** (int):
-				The depth of node curr.
-		
+			depth (int) : The depth of node curr.
 		"""
 		left_dataset, right_dataset = self._split_dataset(dataset,
 														curr.val['splitting_col'],
@@ -174,11 +149,13 @@ class DecisionTree:
 		if len(left_dataset) == 0 or len(right_dataset) == 0:
 			curr.val = self._make_leaf(dataset)
 			del(dataset)
+			return
 		# deal with tree being at max_depth
 		elif depth >= self.max_depth:
 			del(dataset)
 			curr.left = TreeNode(self._make_leaf(left_dataset))
 			curr.right = TreeNode(self._make_leaf(right_dataset))
+			return
 		else:
 			del(dataset)
 			# process right child
@@ -196,20 +173,16 @@ class DecisionTree:
 				curr.right = TreeNode(self._get_split(right_dataset))
 
 				self._split(curr.right,right_dataset ,depth+1)
-		return
 
 	def _get_split(self, dataset):
 		"""
 		Select the best split point and feature for a dataset using a random Selection of the features.
 
-		:param: dataset (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_ ):
-				Training data.
+		Args:	
+			dataset (list of list): Training data.
 			
-		:param: target (str): 
-				The column name of the target in the dataset.
-
-		:return: Dictionary of the best splitting feature of randomly chosen and the best splitting value.
-		:rtype: dict
+		Returns:
+			dict. Dictionary of the best splitting feature of randomly chosen and the best splitting value.
 		"""
 		best_feature, best_value, best_score, best_groups = 999,999,999,None
 
@@ -252,6 +225,15 @@ class DecisionTree:
 
 	def _split_dataset(self, dataset, feature, value):
 		"""
+		This function splits the data set depending on the feature (index) and
+		the splitting value.
+
+		Args:
+			dataset (list) : The list of list representation of the dataframe
+			feature (int) : The column index of the feature.
+			value (float) : The value to split the data.
+		Returns:
+			tupple. The left and right split datasets.
 		"""
 
 		left_dataset, right_dataset = list(), list()
@@ -270,8 +252,8 @@ class DecisionTree:
 
 		This is used for comparison in testing.
 
-		:return: Returns a string of the breadth first traversal.
-		:rtype: str
+		Returns:
+			str. Returns a string of the breadth first traversal.
 		"""
 		s = ""
 		queue = [self.root]
@@ -305,8 +287,9 @@ class DecisionTree:
 		"""
 		Inner recursive call for printing the tree.
 		
-		:param: TreeNode node: The TreeNode node in the binary tree.
-		:param: int depth: The depth of this node in the tree.
+		Args:
+			node (TreeNode) : The TreeNode node in the binary tree.
+			depth (int) : The depth of this node in the tree.
 		"""
 		if isinstance(node.val, dict):
 			print('%s [%s < %.3f]' % ((depth*' ',
