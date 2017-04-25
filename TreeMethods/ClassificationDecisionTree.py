@@ -102,8 +102,7 @@ class DecisionTreeClassifier (DecisionTree):
 				size = len(group)
 				if size == 0:
 					continue
-				p = float( [ row[-1] for row in group ].count(target_value)) 
-				p /= float(size)
+				p = float( [ row[-1] for row in group ].count(target_value)) / float(size)
 				gini += p*(1-p)
 
 		return gini

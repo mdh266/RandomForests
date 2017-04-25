@@ -150,29 +150,28 @@ class DecisionTree:
 			curr.val = self._make_leaf(dataset)
 			del(dataset)
 			return
+
+		del(dataset)
+
 		# deal with tree being at max_depth
-		elif depth >= self.max_depth:
-			del(dataset)
+		if depth >= self.max_depth:
 			curr.left = TreeNode(self._make_leaf(left_dataset))
 			curr.right = TreeNode(self._make_leaf(right_dataset))
 			return
+
+		# process right child
+		if len(left_dataset) <= self.min_size:
+			curr.left = TreeNode(self._make_leaf(left_dataset))
 		else:
-			del(dataset)
-			# process right child
-			if len(left_dataset) <= self.min_size:
-				curr.left = TreeNode(self._make_leaf(left_dataset))
-			else:
-				curr.left = TreeNode(self._get_split(left_dataset))
+			curr.left = TreeNode(self._get_split(left_dataset))
+			self._split(curr.left, left_dataset, depth+1)
 
-				self._split(curr.left, left_dataset, depth+1)
-
-			# process right child
-			if len(right_dataset) <= self.min_size:
-				curr.right = TreeNode(self._make_leaf(right_dataset))
-			else:
-				curr.right = TreeNode(self._get_split(right_dataset))
-
-				self._split(curr.right,right_dataset ,depth+1)
+		# process right child
+		if len(right_dataset) <= self.min_size:
+			curr.right = TreeNode(self._make_leaf(right_dataset))
+		else:
+			curr.right = TreeNode(self._get_split(right_dataset))
+			self._split(curr.right, right_dataset ,depth+1)
 
 	def _get_split(self, dataset):
 		"""
@@ -192,7 +191,7 @@ class DecisionTree:
 		# randomily select features to consider 
 		while len(features) < self.n_features:
 
-			# out of all the features
+			# out of all the features, NOTE: randint is inclusive
 			feature_col = randint(0, self.n_features-1)
  
 			# exclude the target as a possible feature col
