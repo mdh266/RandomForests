@@ -1,302 +1,218 @@
-from random import randint 
-import pandas as pd
+from random import randrange
 
-
-class TreeNode:
+class DecisionTree (object):
 	"""
-	TreeNode is a class used to build a binary decison tree.
+	A decision tree base class. 
+
+	Classification and Regression Trees will be derived class that override 
+	certain functions of this class.  This was done because many common
+	methods, so to reduce code they are written here in the base class.
 		
+	Attributes: 
+		max_depth (int): The maximum depth of tree.
+
+		min_size (int): The minimum number of datapoints in terminal nodes.
+
+		n_features (int): The number of features to be used in splitting.
+
+		root (dictionary): The root of the decision tree.
+
+		columns (list) : The feature names.
 	"""
-	def __init__(self, value):
+	def __init__(self, max_depth=2, min_size=1):
 		"""
-		Constructor for TreeNode in the decision tree. 
-	
-		Args:
-			value (dict or int) : If the node is a leaf, value is the predicted class otherwise it's a dictionary.
-		"""
-		# dictionary if not terminal node, otherwise it it the class value.
-		self.val = value
-		
-		# left child
-		self.left = None
+		Constructor for a generic decision tree.  It just sets the max_depth
+		and min_size.
 
-		# right child
-		self.right = None
-
-
-class DecisionTree:
-	"""
-	A decision tree classifier based off the gini-index.
-	
-		
-	:Attributes: 
-		**max_depth** (int): 
-			The maximum depth of tree.
-
-		**min_size** (int):
-			The minimum number of datapoints in terminal nodes.
-
-		**original_n_features** (int): 
-			The number of features in the dataset.
-
-		**n_features** (int): 
-			The number of randomly chosen features to be used in splitting.
-
-		**root** (:class:`TreeNode`): 
-			The root of the decision tree.
-	"""
-
-	def __init__(self, max_depth=2, min_size=5):
-		"""
-		Constructor for a classification decision tree.
-
-		Kargs: 
+		Args: 
 			max_depth (int) : The maximum depth of tree.
-			min_size (int) : The minimum number of datapoints in terminal nodes.
+			min_size (int) : The min number of datapoints in terminal nodes.
 		"""
 		self.max_depth = max_depth
 		self.min_size = min_size
-		self.original_n_features = None
-		self.n_features =  None 
+		self.n_features = None
 		self.root = None
 		self.columns = None
 
-
-	def set_n_features(self, n_features):
+	def _fit(self, train, n_features=None):
 		"""
-		Set the number of features to choose the split. This could be different
-		then the number of features in the data set because you one might
-		be using this class from a Random Forest.
+		Builds the decsision tree by recursively splitting tree until the
+		the maxmimum depth, max_depth, of the tree is acheived or the nodes
+		have the minmum number of training points per node, min_size, is
+		achieved.
 
+		Note: n_features will be passed by the RandomForest as it is 
+			  usually ta subset of the total number of features. 
+			  However, if one is using the class as a stand alone decision
+			  tree, then the n_features will automatically be 
 		
 		Args:
-			n_features (int) : The number of features to choose the split.
+			dataset (list) : list representation of the dataset.
+
+			n_features (int) : The number of features.
 		"""
-		self.n_features = int(n_features)
 
-	def _predict(self, row):
-		"""
-		Predicts the target value that this datapoint belongs to.
-
-		Args:
-			row (`Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_) : 
-				The datapoint to classify.
-
-		Returns:
-			int. The leaf value of the data point.
-		"""
-		
-		# check to make sure data point is the right size
-		assert row.shape[0] == self.original_n_features
-		
-		# Go down the tree until get a leaf.
-		curr = self.root
-		while isinstance(curr.val, dict):
-			if row[curr.val['splitting_feature']] < curr.val['splitting_value']:
-				curr = curr.left
-			else:
-				curr = curr.right
-
-		# now at a terminal node and get the predtion
-		return curr.val
-
-	def _convert_to_list(self, df, target):
-		"""
-		Converts list Pandas dataframe to list of lists.
-
-		Args:
-			df (`DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : Pandas DataFrame
-			target (str) : The target name
-
-		Returns: 
-			list. list of lists representation of dataframe
-		"""
-		# set the column names 
-		self.columns = df.columns
-
-		# make new dataset dictionary of lists
-		new_dataset = []
-
-		targets = df[target]
-		df = df.drop(target,axis=1)
-
-		# loop over each row and convert from Pandas Series to list
-		for row in df.iterrows():
-			new_dataset.append(row[1].tolist())
-
-		for i in range(len(new_dataset)):
-			new_dataset[i].append(targets[i])
-
-		return new_dataset
-
-	def _split(self, curr, dataset,	depth):
-		"""
-		Recursive splitting function that creates child
-		splits for a node or make this node a terminal node.
-
-		Args:
-			curr (TreeNode): The current node in the Tree
-
-			dataset (list): Training data.
-
-			depth (int) : The depth of node curr.
-		"""
-		left_dataset, right_dataset = self._split_dataset(dataset,
-														curr.val['splitting_col'],
-														curr.val['splitting_value'])
-
-		# check if either split dataset is empty
-		if len(left_dataset) == 0 or len(right_dataset) == 0:
-			curr.val = self._make_leaf(dataset)
-			del(dataset)
-			return
-
-		del(dataset)
-
-		# deal with tree being at max_depth
-		if depth >= self.max_depth:
-			curr.left = TreeNode(self._make_leaf(left_dataset))
-			curr.right = TreeNode(self._make_leaf(right_dataset))
-			return
-
-		# process right child
-		if len(left_dataset) <= self.min_size:
-			curr.left = TreeNode(self._make_leaf(left_dataset))
+		if n_features is None:
+			self.n_features = len(train[0])-1
 		else:
-			curr.left = TreeNode(self._get_split(left_dataset))
-			self._split(curr.left, left_dataset, depth+1)
+			self.n_features = n_features
 
-		# process right child
-		if len(right_dataset) <= self.min_size:
-			curr.right = TreeNode(self._make_leaf(right_dataset))
-		else:
-			curr.right = TreeNode(self._get_split(right_dataset))
-			self._split(curr.right, right_dataset ,depth+1)
+		# perform optimal split for the root
+		self.root = self._get_split(train)
+
+		# now recurisively split the roots dataset until the stopping
+		# criteria is met.
+		root = self._split(self.root, 1)
+
 
 	def _get_split(self, dataset):
 		"""
-		Select the best split point and feature for a dataset using a random Selection of the features.
+		Select the best splitting point and feature for a dataset 
+		using a random selection of self.n_features number of features.
 
 		Args:	
 			dataset (list of list): Training data.
 			
 		Returns:
-			dict. Dictionary of the best splitting feature of randomly chosen and the best splitting value.
+			Dictionary of the best splitting feature of randomly chosen and 
+			the best splitting value.
 		"""
-		best_feature, best_value, best_score, best_groups = 999,999,999,None
+		b_index, b_value, b_score, b_groups = 999, 999, 999, None
 
 		# the features to test among the split
 		features = list()
 
-		# randomily select features to consider 
+		# randomily select features to consider
 		while len(features) < self.n_features:
+			index = randrange(len(dataset[0])-1)
+			if index not in features:
+				features.append(index)
 
-			# out of all the features, NOTE: randint is inclusive
-			feature_col = randint(0, self.n_features-1)
- 
-			# exclude the target as a possible feature col
-			if feature_col not in features:
-				features.append(feature_col)
-		
-		#print features
-		# loop through the number of features to figure out which
-		# gives the best split.
-		for feature in features:
-			# split the data set according to this feature
-			# and find the splits gini_index
-			#print "feature : " + feature
+		# loop through the number of features and values of the data
+		# to figure out which gives the best split according
+		# to the derived classes cost function value of the tested 
+		# split
+		for index in features:
 			for row in dataset:
-				split_val = row[feature]
-				groups = self._split_dataset(dataset, feature, split_val)
+				groups = self._test_split(index, row[index], dataset)
+				gini = self._cost(groups)
+				if gini < b_score:
+					b_index = index
+					b_value = row[index]
+					b_score = gini
+					b_groups = groups
+		return {'index':b_index, 'value':b_value, 'groups':b_groups}
 
-				error = self._error(groups)
-
-				# if this is the best split update the info
-				if error < best_score:
-					best_col = feature
-					best_value = split_val
-					best_score = error
-					#best_groups = [left_group, right_group]
-
-		return {'splitting_col': best_col,
-				'splitting_feature': self.columns[best_col],
-                'splitting_value': best_value}
-
-	def _split_dataset(self, dataset, feature, value):
+	def _test_split(self, index, value, dataset):
 		"""
 		This function splits the data set depending on the feature (index) and
-		the splitting value.
+		the splitting value (value)
 
 		Args:
-			dataset (list) : The list of list representation of the dataframe
-			feature (int) : The column index of the feature.
+			index (int) : The column index of the feature.
 			value (float) : The value to split the data.
+			dataset (list) : The list of list representation of the dataframe
+
 		Returns:
-			tupple. The left and right split datasets.
+			Tupple of the left and right split datasets.
 		"""
-
-		left_dataset, right_dataset = list(), list()
-
+		left, right = list(), list()
 		for row in dataset:
-			if row[feature] < value:
-				left_dataset.append(row)
+			if row[index] < value:
+				left.append(row)
 			else:
-				right_dataset.append(row)
+				right.append(row)
+		return left, right
 
-		return left_dataset, right_dataset
-
-	def _to_string(self):
+	def _split(self, node, depth):
 		"""
-		Prints breadth first traversal of the tree to a string.
+		Recursive splitting function that creates child
+		splits for a node or make this node a leaf.
+		Note: Leaves are just a value, which is determined
+		in the derived class.
 
-		This is used for comparison in testing.
+		Args:
+			node (dictionary): The current node in the tree.
+
+			depth (int) : The depth of node curr.
+
+		Returns: None
+		"""
+		left, right = node['groups']
+		del(node['groups'])
+		# check for a no split
+		if not left or not right:
+			node['left'] = node['right'] = self._make_leaf(left + right)
+			return
+		# check for max depth
+		if depth >= self.max_depth:
+			node['left'] = self._make_leaf(left)
+			node['right'] = self._make_leaf(right)
+			return
+		# process left child
+		if len(left) <= self.min_size:
+			node['left'] = self._make_leaf(left)
+		else:
+			node['left'] = self._get_split(left)
+			self._split(node['left'], depth+1)
+		# process right child
+		if len(right) <= self.min_size:
+			node['right'] = self._make_leaf(right)
+		else:
+			node['right'] = self._get_split(right)
+			self._split(node['right'], depth+1)
+
+	def _predict(self, row, node):
+		"""
+		Predicts the target value that this datapoint belongs to by recursively
+		traversing tree and returns the termina leaf value corresponding 
+		to this data point.
+
+		Args:
+			row (list ) : The data point to classify.
+
+			node (dict ) : The current node in the tree.
 
 		Returns:
-			str. Returns a string of the breadth first traversal.
+			The leaf value of this data point.
 		"""
-		s = ""
-		queue = [self.root]
-		visited = []
-		while len(queue) != 0:
-			curr = queue.pop(0)
-			if curr not in visited:
-				visited.append(curr)
-				if curr.left != None:
-					queue.append(curr.left)
-				if curr.right != None:
-					queue.append(curr.right)
-		
-		for node in visited:
-			if isinstance(node.val, dict):
-				s += '[ ' + node.val['splitting_feature'] + ' < '\
-					+  str(node.val['splitting_value']) + ' ] \n'
+		if row[node['index']] < node['value']:
+			if isinstance(node['left'], dict):
+				return self._predict(row, node['left'])
 			else:
-				s += str(node.val) + '\n'
+				return node['left']
+		else:
+			if isinstance(node['right'], dict):
+				return self._predict(row, node['right'])
+			else:
+				return node['right']
 
-		return s
 
-	def print_tree(self):
+	
+	def print_tree(self, node=None, depth=0):
 		"""
 		Prints the tree using a pre-order traversal.
-		"""
-		self._print_tree(self.root,1)
 
-
-	def _print_tree(self, node, depth):
+		Args: 
+			node (dict) : Current node in the tree.
+			depth (int) : The depth of the current node.
 		"""
-		Inner recursive call for printing the tree.
-		
-		Args:
-			node (TreeNode) : The TreeNode node in the binary tree.
-			depth (int) : The depth of this node in the tree.
-		"""
-		if isinstance(node.val, dict):
-			print('%s [%s < %.3f]' % ((depth*' ',
-				 node.val['splitting_feature'],
-				  node.val['splitting_value'])))
-
-			self._print_tree(node.left, depth+1)
-			self._print_tree(node.right, depth+1)
+		if node is None:
+			self.print_tree(self.root)
 		else:
-			print('%s[%s]' % ((depth*' ', node.val)))
-            
+			if isinstance(node, dict):
+				print('%s[X%d < %.3f]' % ((depth*' ', 
+					  (node['index']+1), node['value'])))
+				self.print_tree(node['left'], depth+1)
+				self.print_tree(node['right'], depth+1)
+			else:
+				print('%s[%s]' % ((depth*' ', node)))
+
+
+
+
+
+
+
+
+

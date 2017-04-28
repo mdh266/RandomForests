@@ -9,10 +9,28 @@ DecisionTree module
     :undoc-members:
     :show-inheritance:
 
-ClassificationDecisionTree module
---------------------------
+DecisionTreeClassifier module
+------------------------------
 
-.. automodule:: TreeMethods.ClassificationDecisionTree
+.. automodule:: TreeMethods.DecisionTreeClassifier
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+RandomForest module
+--------------------
+
+.. automodule:: TreeMethods.RandomForest
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+RandomForestClassifier module
+------------------------------
+
+.. automodule:: TreeMethods.RandomForestClassifier
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

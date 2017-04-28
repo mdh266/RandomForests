@@ -3,17 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Random Forest Classifier
+Random Forests
 ==================================================
 
-This is a python pacakge to show how to build a random forest classifier using
-the gini index as you splitting criteria.
+This is a python pacakge to show how to build a random forest classifier and regressor in Python.
 
 Requirements
 ------------
 * `Python <https://www.python.org/>`_
 * `Pandas <http://pandas.pydata.org/>`_ 
-
+* `NumPy <http://www.numpy.org/>`_
 
 Example
 -------
