@@ -1,20 +1,40 @@
-
-from random import seed
 from random import randrange
-from math import sqrt
-seed(1)
-
-
 
 class DecisionTree (object):
+	"""
+	A decision tree base class. Classification and Regression
+	Trees will be derived class that override certain functions 
+	of this class.  This was done because many common methods,
+	so to reduce code they are written here in the base class.
+		
+	:Attributes: 
+		**max_depth** (int): 
+			The maximum depth of tree.
 
+		**min_size** (int):
+			The minimum number of datapoints in terminal nodes.
+
+		**n_features** (int): 
+			The number of randomly chosen features to be used in splitting.
+
+		**root** (dictionary): 
+			The root of the decision tree.
+	"""
 	def __init__(self, max_depth=2, min_size=1):
+		"""
+		Constructor for a generic decision tree.
+
+		Args: 
+			max_depth (int) : The maximum depth of tree.
+			min_size (int) : The min number of datapoints in terminal nodes.
+		"""
 		self.max_depth = max_depth
 		self.min_size = min_size
 		self.n_features = None
 		self.root = None
 
 	def _fit(self, train, n_features=None):
+
 		if n_features is None:
 			self.n_features = len(train[0])-1
 		else:
@@ -37,7 +57,10 @@ class DecisionTree (object):
 				groups = self._test_split(index, row[index], dataset)
 				gini = self._cost(groups)
 				if gini < b_score:
-					b_index, b_value, b_score, b_groups = index, row[index], gini, groups
+					b_index = index
+					b_value = row[index]
+					b_score = gini
+					b_groups = groups
 		return {'index':b_index, 'value':b_value, 'groups':b_groups}
 
 	def _test_split(self, index, value, dataset):
@@ -51,6 +74,17 @@ class DecisionTree (object):
 
 	# Create child splits for a node or make terminal
 	def _split(self, node, depth):
+		"""
+		Recursive splitting function that creates child
+		splits for a node or make this node a leaf.
+		Note: Leaves are just a value, which is determined
+		in the derived class.
+
+		Args:
+			node (dictionary): The current node in the tree.
+
+			depth (int) : The depth of node curr.
+		"""
 		left, right = node['groups']
 		del(node['groups'])
 		# check for a no split
@@ -94,120 +128,18 @@ class DecisionTree (object):
 			self.print_tree(self.root)
 		else:
 			if isinstance(node, dict):
-				print('%s[X%d < %.3f]' % ((depth*' ', (node['index']+1), node['value'])))
+				print('%s[X%d < %.3f]' % ((depth*' ', 
+					  (node['index']+1), node['value'])))
 				self.print_tree(node['left'], depth+1)
 				self.print_tree(node['right'], depth+1)
 			else:
 				print('%s[%s]' % ((depth*' ', node)))
 
 
-class DecisionTreeClassifier (DecisionTree):
-
-	def __init__(self, max_depth=2, min_size=2, cost='gini'):
-		DecisionTree.__init__(self, max_depth, min_size)
-		self.class_values = None
-		self.cost_function = cost
-
-	def fit(self, train, n_features):
-		self.class_values = list(set(row[-1] for row in train))
-		self._fit(train, n_features)
-
-	def predict(self, row):
-		return self._predict(row, self.root)
-
-	def _cost(self, groups):
-		return self._gini_index(groups, self.class_values)
-
-	def _gini_index(self, groups, class_values):
-		gini = 0.0
-		for class_value in class_values:
-			for group in groups:
-				size = len(group)
-				if size == 0:
-					continue
-				p = [row[-1] for row in group].count(class_value) / float(size)
-				gini += (p * (1.0 - p))
-				return gini
-
-	def _make_leaf(self, group):
-		outcomes = [row[-1] for row in group]
-		return max(set(outcomes), key=outcomes.count)
 
 
-class RandomForestClassifier:
 
-	def __init__(self, n_trees=10, max_depth=2, min_size=2, cost='gini'):
-		self.max_depth = max_depth
-		self.min_size = min_size 
-		self.cost_function = cost
-		self.n_trees = n_trees
-		self.trees = list()
 
-	def fit(self, train, test):
-		n_features = int(sqrt(len(train[0])-1))
 
-		for i in range(self.n_trees):
-			sample = self._subsample(train)
-			tree = DecisionTreeClassifier(self.max_depth,
-										   self.min_size,
-										   self.cost_function)
-
-			tree.fit(sample, n_features)
-			self.trees.append(tree)
-
-		predictions = [self.bagging_predict(row) for row in test]
-		return(predictions)
-
-	def bagging_predict(self, row):
-		predictions = [tree.predict(row) for tree in self.trees]
-		return max(set(predictions), key=predictions.count)
-
-	def KFoldCV(self, dataset, n_folds=10):
-		folds = self._cross_validation_split(dataset, n_folds)
-		scores = list()
-		for fold in folds:
-			train_set = list(folds)
-			train_set.remove(fold)
-			train_set = sum(train_set, [])
-			test_set = list()
-		for row in fold:
-			row_copy = list(row)
-			test_set.append(row_copy)
-			row_copy[-1] = None
-		predicted = self.fit(train_set, test_set)
-		actual = [row[-1] for row in fold]
-		accuracy = self._metric(actual, predicted)
-		scores.append(accuracy)
-		return scores
-
-	def _cross_validation_split(self, dataset, n_folds):
-		dataset_split = list()
-		dataset_copy = list(dataset)
-		fold_size = int(len(dataset) / n_folds)
-		for i in range(n_folds):
-			fold = list()
-			while len(fold) < fold_size:
-				index = randrange(len(dataset_copy))
-				fold.append(dataset_copy.pop(index))
-			dataset_split.append(fold)
-		return dataset_split
-
-	def _metric(self, actual, predicted):
-		return self._accuracy(actual, predicted)
-
-	def _accuracy(self, actual, predicted):
-		correct = 0
-		for i in range(len(actual)):
-			if actual[i] == predicted[i]:
-				correct += 1
-		return correct / float(len(actual)) * 100.0
-
-	def _subsample(self, dataset):
-		sample = list()
-		n_sample = round(len(dataset))
-		while len(sample) < n_sample:
-			index = randrange(len(dataset))
-			sample.append(dataset[index])
-		return sample
 
 
