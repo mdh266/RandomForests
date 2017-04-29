@@ -1,14 +1,15 @@
-# DecisionTrees
-
+# Random Forests
 
 ## Intoduction
-I started this project to better understand the way decision trees and random forest methods work.  At this point the code is just a decision tree classifier based off the gini-index, but I am working on extending it to regression trees and random forests.
+I started this project to better understand the way decision trees and random forest methods work.  At this point the code only the classifiers ( decision tree and random forest) based off the gini-index are working, but I am working on extending it to regression trees and random forest.
+
 
 ## Dependencies
 The dependencies for this project are rather minimal, including,
 
 1. <a href="https://www.python.org/">Python</a> 2.7
 2. <a href="http://pandas.pydata.org/">Pandas</a>
+3. <a href="http://www.numpy.org/">NumPy</a>
 3. <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> (for documentation only)
 
 You can install all the dependencies using <a href="https://pip.pypa.io/en/stable/">pip</a> (except for python and Sphinx) by entering into the commandline,

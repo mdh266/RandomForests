@@ -45,7 +45,7 @@ class DecisionTreeClassifier (DecisionTree):
 
 		
 
-	def fit(self, train, n_features=None):
+	def fit(self, train, target=None, n_features=None):
 		"""
 		Builds the classification decsision tree by recursively splitting 
 		tree until the the maxmimum depth, max_depth of the tree is acheived or
@@ -57,24 +57,29 @@ class DecisionTreeClassifier (DecisionTree):
 			  tree, then the n_features will automatically be 
 		
 		Args:
-			dataset (list) : list representation of the dataset.
+			dataset (list or DataFrame) : The dataset.
+	
+			target (str) : The name of the target variable.
 
 			n_features (int) : The number of features.
 		"""
 		self.class_values = list(set(row[-1] for row in train))
-		self._fit(train, n_features)
+		self._fit(train, target, n_features)
 
 	def predict(self, row):
 		"""
 		Predict the class that this sample datapoint belongs to.
 
 		Args:
-			row (list) : The datapoint to classify.
+			row (list or Pandas Series) : The datapoint to classify.
 
 		Returns:
 			int. The class the data points belong to.
 		"""
-		return self._predict(row, self.root)
+		if isinstance(row, list) is False:
+			return self._predict(row.tolist(), self.root)
+		else:
+			return self._predict(row, self.root)
 
 
 	def _cost(self, groups):

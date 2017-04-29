@@ -34,7 +34,8 @@ class DecisionTree (object):
 		self.root = None
 		self.columns = None
 
-	def _fit(self, train, n_features=None):
+
+	def _fit(self, train, target=None, n_features=None):
 		"""
 		Builds the decsision tree by recursively splitting tree until the
 		the maxmimum depth, max_depth, of the tree is acheived or the nodes
@@ -47,10 +48,17 @@ class DecisionTree (object):
 			  tree, then the n_features will automatically be 
 		
 		Args:
-			dataset (list) : list representation of the dataset.
+			train (list or DataFrame) : The dataset.
+
+			target (str): The name of the target variable
 
 			n_features (int) : The number of features.
 		"""
+		if isinstance(train,list) is False:
+			if target is None:
+				raise ValueError('If passing dataframe need to specify target.')
+			else:
+				train = self._convert_dataframe_to_list(train, target)
 
 		if n_features is None:
 			self.n_features = len(train[0])-1
@@ -187,7 +195,6 @@ class DecisionTree (object):
 			else:
 				return node['right']
 
-
 	
 	def print_tree(self, node=None, depth=0):
 		"""
@@ -208,8 +215,32 @@ class DecisionTree (object):
 			else:
 				print('%s[%s]' % ((depth*' ', node)))
 
+	def _convert_dataframe_to_list(self, df, target):
+		"""
+		This function converts a Pandas DataFrame into list of list.
 
+		Args:
+			df (Pandas DataFrame) : The Pandas DataFrame of the dataset.
 
+			target (str) : The column name of the target variable.
+
+		Returns:
+			List representation of the dataframe.
+		"""
+		r_dataset = []
+		self.columns = df.columns
+		targets = df[target]
+		df = df.drop(target, axis=1)
+
+		# copy over the feature rows
+		for row in df.iterrows():
+			r_dataset.append(row[1].tolist())
+
+		# copy over the target row
+		for i in range(len(r_dataset)):
+			r_dataset[i].append(targets[i])
+
+		return r_dataset
 
 
 

@@ -47,7 +47,7 @@ class RandomForestClassifier (RandomForest):
 			RandomForest.__init__(self, cost,  n_trees=10, max_depth=2, min_size=2)
 		
 
-	def fit(self, train, test=None):
+	def fit(self, train, target=None, test=None):
 		"""
 		Fit the random forest to the training set train.  If a test set is provided
 		then the return value wil be the predictions of the RandomForest on the
@@ -58,15 +58,23 @@ class RandomForestClassifier (RandomForest):
 		the square root of the number of total features in the dataset.
 
 		Args:
-			train (list) : The training set.
+			train (list or DataFrame) : The training set.
+			target (str or None) : The name of the target variable
 			test (list) : The test set.
-
+			
 		Returns:
 			list or None. If a test set is provided then the return value wil be
 			the predictions of the RandomForest on the test set.  If no test set 
 			is provide nothing is returned.
 		"""
 		# set the number of features for the trees to use.
+		if isinstance(train, list) is False:
+			if target is None:
+				raise ValueError('If passing dataframe need to specify target.')
+			else:
+		
+				train = self._convert_dataframe_to_list(train, target)
+	
 		n_features = int(sqrt(len(train[0])-1))
 
 		for i in range(self.n_trees):
@@ -96,7 +104,12 @@ class RandomForestClassifier (RandomForest):
 		Returns: 
 			int.  The predicted target class for this data point.
 		"""
-		predictions = [tree.predict(row) for tree in self.trees]
+		if isinstance(row, list) is False:
+			row = row.tolist()
+			predictions = [tree.predict(row) for tree in self.trees]
+		else:
+			predictions = [tree.predict(row) for tree in self.trees]
+
 		return max(set(predictions), key=predictions.count)
 
 
@@ -113,6 +126,12 @@ class RandomForestClassifier (RandomForest):
 			list. List of the accuracy of each Random Forest on each
 			of the folds.
 		"""
+		if isinstance(dataset, list) is False:
+			if target is None:
+				raise ValueError('If passing dataframe need to specify target.')
+			else:
+				dataset = self._convert_dataframe_to_list(dataset, target)
+
 		folds = self._cross_validation_split(dataset, n_folds)
 		scores = list()
 		for fold in folds:

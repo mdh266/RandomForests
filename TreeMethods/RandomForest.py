@@ -92,3 +92,30 @@ class RandomForest (object):
 			index = randrange(len(dataset))
 			sample.append(dataset[index])
 		return sample
+
+	def _convert_dataframe_to_list(self, df, target):
+		"""
+		This function converts a Pandas DataFrame into list of list.
+
+		Args:
+			df (Pandas DataFrame) : The Pandas DataFrame of the dataset.
+
+			target (str) : The column name of the target variable.
+
+		Returns:
+			List representation of the dataframe.
+		"""
+		r_dataset = []
+		self.columns = df.columns
+		targets = df[target]
+		df = df.drop(target, axis=1)
+
+		# copy over the feature rows
+		for row in df.iterrows():
+			r_dataset.append(row[1].tolist())
+
+		# copy over the target row
+		for i in range(len(r_dataset)):
+			r_dataset[i].append(targets[i])
+
+		return r_dataset
