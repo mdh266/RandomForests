@@ -8,16 +8,16 @@ class DecisionTree (object):
 	certain functions of this class.  This was done because many common
 	methods, so to reduce code they are written here in the base class.
 		
-	Attributes: 
-		max_depth (int): The maximum depth of tree.
+	:Atrributes:
+		**max_depth** (int): The maximum depth of tree.
 
-		min_size (int): The minimum number of datapoints in terminal nodes.
+		**min_size** (int): The minimum number of datapoints in terminal nodes.
 
-		n_features (int): The number of features to be used in splitting.
+		**n_features** (int): The number of features to be used in splitting.
 
-		root (dictionary): The root of the decision tree.
+		**root** (dictionary): The root of the decision tree.
 
-		columns (list) : The feature names.
+		**columns** (list) : The feature names.
 	"""
 	def __init__(self, max_depth=2, min_size=1):
 		"""
@@ -200,9 +200,11 @@ class DecisionTree (object):
 		"""
 		Prints the tree using a pre-order traversal.
 
-		Args: 
-			node (dict) : Current node in the tree.
-			depth (int) : The depth of the current node.
+		:Parameters: 
+		
+			**node** (dict) : Current node in the tree.
+
+			**depth** (int) : The depth of the current node.
 		"""
 		if node is None:
 			self.print_tree(self.root)

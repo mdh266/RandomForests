@@ -6,20 +6,20 @@ class DecisionTreeClassifier (DecisionTree):
 	"""
 	A decision tree classifier that extends the DecisionTree class. 
 
-	Attributes: 
-		max_depth (int): The maximum depth of tree.
+	:Attributes: 
+		**max_depth** (int): The maximum depth of tree.
 
-		min_size (int): The minimum number of datapoints in terminal nodes.
+		**min_size** (int): The minimum number of datapoints in terminal nodes.
 
-		n_features (int): The number of features to be used in splitting.
+		**n_features** (int): The number of features to be used in splitting.
 
-		root (dictionary): The root of the decision tree.
+		**root** (dictionary): The root of the decision tree.
 
-		columns (list) : The feature names.
+		**columns** (list) : The feature names.
 
-		class_values (list) : The list of the target class values.
+		**class_values** (list) : The list of the target class values.
 
-		cost_function (str) : The name of the cost function to use: 'gini' or 'entropy'
+		**cost_function** (str) : The name of the cost function to use: 'gini' or 'entropy'
 	"""
 
 	def __init__(self, max_depth=2, min_size=2, cost='gini'):
@@ -51,13 +51,12 @@ class DecisionTreeClassifier (DecisionTree):
 		tree until the the maxmimum depth, max_depth of the tree is acheived or
 		the node have the minimum number of training points, min_size.
 		
-		Note: n_features will be passed by the RandomForest as it is 
-			  usually ta subset of the total number of features. 
-			  However, if one is using the class as a stand alone decision
-			  tree, then the n_features will automatically be 
+		n_features will be passed by the RandomForest as it is usually a subset 
+		of the total number of features. However, if one is using the class as a stand alone decision
+		tree, then the n_features will automatically be 
 		
-		Args:
-			dataset (list or DataFrame) : The dataset.
+		:Parameters:
+			**dataset** (list or `Pandas DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : The dataset.
 	
 			target (str) : The name of the target variable.
 
@@ -70,11 +69,9 @@ class DecisionTreeClassifier (DecisionTree):
 		"""
 		Predict the class that this sample datapoint belongs to.
 
-		Args:
-			row (list or Pandas Series) : The datapoint to classify.
+		:Parameter: **row** (list or `Pandas Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_) : The datapoint to classify.
 
-		Returns:
-			int. The class the data points belong to.
+		:Returns: (int) The class the data points belong to.
 		"""
 		if isinstance(row, list) is False:
 			return self._predict(row.tolist(), self.root)

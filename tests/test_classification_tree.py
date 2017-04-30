@@ -66,25 +66,25 @@ test_predict_data = [
 (pd.Series([1.0], index=['col1']), 0),
 (pd.Series([4.0], index=['col1']), 1)]
 
-@pytest.mark.parametrize('row, expected', test_predict_data)
-def test_predict(row, expected):
-	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
+#@pytest.mark.parametrize('row, expected', test_predict_data)
+#def test_predict(row, expected):
+#	tree = DecisionTreeClassifier(max_depth=5, min_size=2)
 
-	dataset = [[1, 0],
-		[1.2, 0],
-		[1.3, 0],
-		[2.0, 1],
-		[2.1, 1],
-		[2.5, 1]]
+#	dataset = [[1, 0],
+#		[1.2, 0],
+#		[1.3, 0],
+#		[2.0, 1],
+#		[2.1, 1],
+#		[2.5, 1]]
 
 	
-	df = pd.DataFrame(data=dataset,columns =['col1','tar'])
+#	df = pd.DataFrame(data=dataset,columns =['col1','tar'])
 	#df.sort_values('col1',inplace=True)
 #	df = df.reset_index(drop=True)
 
-	tree = DecisionTreeClassifier(5,2) 
-	tree.fit(df,target='tar')
+#	tree = DecisionTreeClassifier(5,2) 
+#	tree.fit(df,target='tar')
 	
-	assert tree.predict(row) == expected
+#	assert tree.predict(row) == expected
 
 

@@ -9,18 +9,18 @@ class RandomForestClassifier (RandomForest):
 	"""
 	A random forest classifier that derives from the base class RandomForest.
 		
-	Attributes: 
-		n_trees (int) : The number of trees to use.
+	:Attributes: 
+		**n_trees** (int) : The number of trees to use.
 
-		max_depth (int): The maximum depth of tree.
+		**max_depth** (int): The maximum depth of tree.
 
-		min_size (int): The minimum number of datapoints in terminal nodes.
+		**min_size** (int): The minimum number of datapoints in terminal nodes.
 
-		cost_function (str) : The name of the cost function to use: 'gini'.
+		**cost_function** (str) : The name of the cost function to use: 'gini'.
 
-		trees (list) : A list of the DecisionTree objects.
+		**trees** (list) : A list of the DecisionTree objects.
 
-		columns (list) : The feature names.
+		**columns** (list) : The feature names.
 	"""
 
 	def __init__(self, n_trees=10, max_depth=2, min_size=2, cost='gini'):
@@ -57,13 +57,15 @@ class RandomForestClassifier (RandomForest):
 		Note: Below we set the number of features to use in the splitting to be
 		the square root of the number of total features in the dataset.
 
-		Args:
-			train (list or DataFrame) : The training set.
-			target (str or None) : The name of the target variable
-			test (list) : The test set.
+		:Parameters:
+			**train** (list or `Pandas DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : The training set.
 			
-		Returns:
-			list or None. If a test set is provided then the return value wil be
+			**target** (str or None) : The name of the target variable
+			
+			**test** (list or `Pandas DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : The test set.
+			
+		:Returns:
+			(list or None): If a test set is provided then the return value wil be
 			the predictions of the RandomForest on the test set.  If no test set 
 			is provide nothing is returned.
 		"""
@@ -98,11 +100,9 @@ class RandomForestClassifier (RandomForest):
 		the prediction of the trees in the ensemble. The majority
 		target class that is chosen.
 
-		Args: 
-			row (list ) : The data point to classify.
+		:Parameter: **row** (list or `Pandas Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_ ) : The data point to classify.
 
-		Returns: 
-			int.  The predicted target class for this data point.
+		:Returns: (int) : The predicted target class for this data point.
 		"""
 		if isinstance(row, list) is False:
 			row = row.tolist()
@@ -118,12 +118,12 @@ class RandomForestClassifier (RandomForest):
 		Perform k-fold cross validatation on the dataset 
 		and return the acrruracy of each training.
 
-		Args:
-			dataset (list) : The dataset in list form.
-			n_fold (int) : The number of folds in the k-fold CV.
+		:Parameters:
+			**dataset** (list or `Pandas DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_) : The dataset in list form.
+			
+			**n_fold** (int) : The number of folds in the k-fold CV.
 
-		Returns:
-			list. List of the accuracy of each Random Forest on each
+		:Returns: (list) : List of the accuracy of each Random Forest on each
 			of the folds.
 		"""
 		if isinstance(dataset, list) is False:

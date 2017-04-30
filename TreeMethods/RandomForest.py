@@ -11,19 +11,18 @@ class RandomForest (object):
 	because many common methods, so to reduce code they are written here 
 	in the base class.
 		
-	Attributes: 
-		max_depth (int): The maximum depth of tree.
+	:Attributes: 
+		**max_depth** (int): The maximum depth of tree.
 
-		min_size (int): The minimum number of datapoints in terminal nodes.
+		**min_size** (int): The minimum number of datapoints in terminal nodes.
 
-		cost_function (str) : The name of the cost function to use: 'gini' 
-							  or 'entropy'
+		**cost_function** (str) : The name of the cost function to use: 'gini' or 'entropy'
 
-		n_trees (int) : The number of trees to use.
+		**n_trees** (int) : The number of trees to use.
 
-		trees (list) : A list of the DecisionTree objects.
+		**trees** (list) : A list of the DecisionTree objects.
 
-		columns (list) : The feature names.
+		**columns** (list) : The feature names.
 	"""
 
 	def __init__(self, cost, n_trees=10, max_depth=2, min_size=2):
