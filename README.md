@@ -74,7 +74,6 @@ The html documentation will be in the directory <code>_build/html/</code>.  Open
 
 - <a href="http://scikit-learn.org/stable/auto_examples/index.html#ensemble-methods">Scikit-learn</a>
 
-- <a href="http://machinelearningmastery.com/implement-random-forest-scratch-python/">
-How to Implement Random Forest From Scratch In Python</a>
+- <a href="http://machinelearningmastery.com/implement-random-forest-scratch-python/"> How to Implement Random Forest From Scratch In Python</a>
 
 - <a href="http://machinelearningmastery.com/implement-decision-tree-algorithm-scratch-python/">How To Implement A Decision Tree From Scratch In Python</a>
