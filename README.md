@@ -1,7 +1,7 @@
 # Random Forests In Python
 
 ## Intoduction
-I started this project to better understand the way <a href="https://en.wikipedia.org/wiki/Decision_tree">decision trees</a> and <a href="https://en.wikipedia.org/wiki/Random_forest">random forests</a> work.  At this point the code only the classifiers ( decision tree and random forest) based off the gini-index are working, but I am working on extending it to regression trees and random forests.  The classifiers are built to work with datasets that are lists of lists, where the target variable values are the right most column.  It can also work with datasets that use <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html">Pandas DataFrames</a> and <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html">Pandas Series</a>.
+I started this project to better understand the way <a href="https://en.wikipedia.org/wiki/Decision_tree">decision trees</a> and <a href="https://en.wikipedia.org/wiki/Random_forest">random forests</a> work.  At this point the classifiers are only based off the gini-index and the regression models are based off the mean square error.  Both the classifiers and regression models are built to work with datasets that are lists of lists, where the target variable values are the right most column.  It can also work with datasets that use <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html">Pandas DataFrames</a> and <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html">Pandas Series</a>.
 
 ## Dependencies
 The dependencies for this project are rather minimal, including,
