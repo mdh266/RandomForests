@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TreeMethods.DecisionTreeRegressor &#8212; Random Forests 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Random Forests 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for TreeMethods.DecisionTreeRegressor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">DecisionTree</span> <span class="k">import</span> <span class="n">DecisionTree</span>
+
+
+<div class="viewcode-block" id="DecisionTreeRegressor"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.DecisionTreeRegressor.DecisionTreeRegressor">[docs]</a><span class="k">class</span> <span class="nc">DecisionTreeRegressor</span> <span class="p">(</span><span class="n">DecisionTree</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A decision tree regression model that extends the DecisionTree class. </span>
+
+<span class="sd">	:Attributes: </span>
+<span class="sd">		**max_depth** (int): The maximum depth of tree.</span>
+
+<span class="sd">		**min_size** (int): The minimum number of datapoints in terminal nodes.</span>
+
+<span class="sd">		**n_features** (int): The number of features to be used in splitting.</span>
+
+<span class="sd">		**root** (dictionary): The root of the decision tree.</span>
+
+<span class="sd">		**columns** (list) : The feature names.</span>
+
+<span class="sd">		**cost_function** (str) : The name of the cost function to use: &#39;mse&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Constructor for the Decision Tree Regressor.  It calls the base</span>
+<span class="sd">		class constructor and sets the cost function.  If the cost</span>
+<span class="sd">		parameter is not &#39;mse&#39; an error is thrown.</span>
+
+<span class="sd">		Parameters: </span>
+<span class="sd">			**max_depth** (int): The maximum depth of tree.</span>
+
+<span class="sd">			**min_size** (int): The minimum number of datapoints in terminal nodes.</span>
+
+<span class="sd">			**cost** (str) : The name of the cost function to use: &#39;gini&#39; or &#39;entropy&#39;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">DecisionTree</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">min_size</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cost_function</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">if</span> <span class="n">cost</span> <span class="o">==</span> <span class="s1">&#39;mse&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">cost_function</span> <span class="o">=</span> <span class="n">cost</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;Not valid cost function&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DecisionTreeRegressor.fit"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.DecisionTreeRegressor.DecisionTreeRegressor.fit">[docs]</a>	<span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Builds the regression decsision tree by recursively splitting </span>
+<span class="sd">		tree until the the maxmimum depth, max_depth of the tree is acheived or</span>
+<span class="sd">		the node have the minimum number of training points, min_size.</span>
+<span class="sd">		</span>
+<span class="sd">		n_features will be passed by the RandomForest as it is usually a subset </span>
+<span class="sd">		of the total number of features. However, if one is using the class as </span>
+<span class="sd">		a stand alone decision tree, then the n_features will automatically be </span>
+<span class="sd">		</span>
+<span class="sd">		:Parameters:</span>
+<span class="sd">			**dataset** (list or `Pandas DataFrame &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html&gt;`_) : The dataset.</span>
+<span class="sd">	</span>
+<span class="sd">			**target** (str) : The name of the target variable.</span>
+
+<span class="sd">			**n_features** (int) : The number of features.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DecisionTreeRegressor.predict"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.DecisionTreeRegressor.DecisionTreeRegressor.predict">[docs]</a>	<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Predict the class that this sample datapoint belongs to.</span>
+
+<span class="sd">		:Parameter: **row** (list or `Pandas Series &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html&gt;`_) : The datapoint to classify.</span>
+
+<span class="sd">		:Returns: (int) The class the data points belong to.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+	<span class="k">def</span> <span class="nf">_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the associated cost for the split of the dataset </span>
+<span class="sd">		into two groups. The cost_function will be set when the</span>
+<span class="sd">		tree is initialized.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			groups (list) : List of the two subdatasets after splitting.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			float. Mean square error of the split.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mse</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_mse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the mse for the split of the dataset into two groups.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			groups (list) : List of the two subdatasets after splitting.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			float. mse of the split.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mse</span> <span class="o">=</span> <span class="mf">0.0</span>
+		<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="k">continue</span>
+			<span class="n">outcomes</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]</span>
+			<span class="n">mse</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">mse</span>
+
+	<span class="k">def</span> <span class="nf">_make_leaf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a terminal node value by taking the average target value</span>
+<span class="sd">		in the group.</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">        	group (list): The subgroup of the dataset.</span>
+
+<span class="sd">       	Returns:</span>
+<span class="sd">       		int. The mean  of this groups target class values.</span>
+<span class="sd">    	&quot;&quot;&quot;</span>
+		<span class="n">outcomes</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Michael Harmon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TreeMethods.RandomForestClassifier &#8212; Random Forests 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Random Forests 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for TreeMethods.RandomForestClassifier</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">RandomForest</span> <span class="k">import</span> <span class="n">RandomForest</span>
+<span class="kn">from</span> <span class="nn">DecisionTreeClassifier</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
+
+
+
+<div class="viewcode-block" id="RandomForestClassifier"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.RandomForestClassifier.RandomForestClassifier">[docs]</a><span class="k">class</span> <span class="nc">RandomForestClassifier</span> <span class="p">(</span><span class="n">RandomForest</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A random forest classifier that derives from the base class RandomForest.</span>
+<span class="sd">		</span>
+<span class="sd">	:Attributes: </span>
+<span class="sd">		**n_trees** (int) : The number of trees to use.</span>
+
+<span class="sd">		**max_depth** (int): The maximum depth of tree.</span>
+
+<span class="sd">		**min_size** (int): The minimum number of datapoints in terminal nodes.</span>
+
+<span class="sd">		**cost_function** (str) : The name of the cost function to use: &#39;gini&#39;.</span>
+
+<span class="sd">		**trees** (list) : A list of the DecisionTree objects.</span>
+
+<span class="sd">		**columns** (list) : The feature names.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trees</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="s1">&#39;gini&#39;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Constructor for random forest classifier. This mainly just initialize</span>
+<span class="sd">		the attributes of the class by calling the base class constructor. </span>
+<span class="sd">		However, here is where it is the cost function string is checked</span>
+<span class="sd">		to make sure it either using &#39;gini&#39;, otherwise an error is thrown.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			cost (str) : The name of the cost function to use for evaluating</span>
+<span class="sd">						 the split.</span>
+
+<span class="sd">			n_trees (int): The number of trees to use.</span>
+
+<span class="sd">			max_depth (int): The maximum depth of tree.</span>
+
+<span class="sd">			min_size (int): The minimum number of datapoints in terminal nodes.</span>
+<span class="sd">	</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">cost</span> <span class="o">!=</span> <span class="s1">&#39;gini&#39;</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;Not valid cost function&#39;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">RandomForest</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span>  <span class="n">n_trees</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+		
+
+<div class="viewcode-block" id="RandomForestClassifier.fit"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.RandomForestClassifier.RandomForestClassifier.fit">[docs]</a>	<span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Fit the random forest to the training set train.  If a test set is provided</span>
+<span class="sd">		then the return value wil be the predictions of the RandomForest on the</span>
+<span class="sd">		test set.  If no test set is provide nothing is returned.</span>
+
+
+<span class="sd">		Note: Below we set the number of features to use in the splitting to be</span>
+<span class="sd">		the square root of the number of total features in the dataset.</span>
+
+<span class="sd">		:Parameters:</span>
+<span class="sd">			**train** (list or `Pandas DataFrame &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html&gt;`_) : The training set.</span>
+<span class="sd">			</span>
+<span class="sd">			**target** (str or None) : The name of the target variable</span>
+<span class="sd">			</span>
+<span class="sd">			**test** (list or `Pandas DataFrame &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html&gt;`_) : The test set.</span>
+<span class="sd">			</span>
+<span class="sd">		:Returns:</span>
+<span class="sd">			(list or None): If a test set is provided then the return value wil be</span>
+<span class="sd">			the predictions of the RandomForest on the test set.  If no test set </span>
+<span class="sd">			is provide nothing is returned.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># set the number of features for the trees to use.</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;If passing dataframe need to specify target.&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+		
+				<span class="n">train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_dataframe_to_list</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+	
+		<span class="n">n_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_trees</span><span class="p">):</span>
+			<span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsample</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+			<span class="n">tree</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">,</span>
+										   <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">,</span>
+										   <span class="bp">self</span><span class="o">.</span><span class="n">cost_function</span><span class="p">)</span>
+
+			<span class="n">tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+
+		<span class="c1"># if the test set is not empty then return the predictions</span>
+		<span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">test</span><span class="p">]</span>
+			<span class="k">return</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RandomForestClassifier.predict"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.RandomForestClassifier.RandomForestClassifier.predict">[docs]</a>	<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Peform a prediction for a sample data point by bagging </span>
+<span class="sd">		the prediction of the trees in the ensemble. The majority</span>
+<span class="sd">		target class that is chosen.</span>
+
+<span class="sd">		:Parameter: **row** (list or `Pandas Series &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html&gt;`_ ) : The data point to classify.</span>
+
+<span class="sd">		:Returns: (int) : The predicted target class for this data point.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+			<span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trees</span><span class="p">]</span>
+
+		<span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">predictions</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">predictions</span><span class="o">.</span><span class="n">count</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RandomForestClassifier.KFoldCV"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.RandomForestClassifier.RandomForestClassifier.KFoldCV">[docs]</a>	<span class="k">def</span> <span class="nf">KFoldCV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Perform k-fold cross validatation on the dataset </span>
+<span class="sd">		and return the acrruracy of each training.</span>
+
+<span class="sd">		:Parameters:</span>
+<span class="sd">			**dataset** (list or `Pandas DataFrame &lt;http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html&gt;`_) : The dataset in list form.</span>
+<span class="sd">			</span>
+<span class="sd">			** target ** (str) : The target variable name.</span>
+<span class="sd">			</span>
+<span class="sd">			**n_fold** (int) : The number of folds in the k-fold CV.</span>
+
+<span class="sd">		:Returns: (list) : List of the accuracy of each Random Forest on each</span>
+<span class="sd">			of the folds.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;If passing dataframe need to specify target.&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_dataframe_to_list</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+		<span class="n">folds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cross_validation_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">)</span>
+		<span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
+			<span class="n">train_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">folds</span><span class="p">)</span>
+			<span class="n">train_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fold</span><span class="p">)</span>
+			<span class="n">train_set</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="p">[])</span>
+			<span class="n">test_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fold</span><span class="p">:</span>
+				<span class="n">row_copy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+				<span class="n">test_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_copy</span><span class="p">)</span>
+				<span class="n">row_copy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="n">test_set</span><span class="p">)</span>
+			<span class="n">actual</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fold</span><span class="p">]</span>
+			<span class="n">accuracy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+			<span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">scores</span></div>
+
+
+	<span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the accuracy of the predictions for now, extending it </span>
+<span class="sd">		to include other metrics.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			actual (list) : The actual target values.</span>
+<span class="sd">			predicted (list) : The predicted target values.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			float.  The accuracy of the predictions.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accuracy</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">_accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Computes the accuracy by counting how many predictions were correct.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			actual (list) : The actual target values.</span>
+<span class="sd">			predicted (list) : The predicted target values.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			float.  The accuracy of the predictions.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="n">actual</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">predicted</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+				<span class="n">correct</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">return</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span> <span class="o">*</span> <span class="mf">100.0</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Michael Harmon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>

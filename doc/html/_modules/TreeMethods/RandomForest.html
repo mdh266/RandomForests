@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TreeMethods.RandomForest &#8212; Random Forests 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Random Forests 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for TreeMethods.RandomForest</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">randrange</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">seed</span>
+<span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RandomForest"><a class="viewcode-back" href="../../TreeMethods.html#TreeMethods.RandomForest.RandomForest">[docs]</a><span class="k">class</span> <span class="nc">RandomForest</span> <span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A Random Forest base class. </span>
+
+<span class="sd">	Classification and Regression Random Forests will be derived classes</span>
+<span class="sd">	that override certain functions of this class.  This was done </span>
+<span class="sd">	because many common methods, so to reduce code they are written here </span>
+<span class="sd">	in the base class.</span>
+<span class="sd">		</span>
+<span class="sd">	:Attributes: </span>
+<span class="sd">		**max_depth** (int): The maximum depth of tree.</span>
+
+<span class="sd">		**min_size** (int): The minimum number of datapoints in terminal nodes.</span>
+
+<span class="sd">		**cost_function** (str) : The name of the cost function to use: &#39;gini&#39; or &#39;entropy&#39;</span>
+
+<span class="sd">		**n_trees** (int) : The number of trees to use.</span>
+
+<span class="sd">		**trees** (list) : A list of the DecisionTree objects.</span>
+
+<span class="sd">		**columns** (list) : The feature names.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">n_trees</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Constructor for the base class random forest. This mainly just initializez</span>
+<span class="sd">		the attributes of the class.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			cost (str) : The name of the cost function to use for evaluating</span>
+<span class="sd">						 the split.</span>
+
+<span class="sd">			n_trees (int): The number of trees to use.</span>
+
+<span class="sd">			max_depth (int): The maximum depth of tree.</span>
+
+<span class="sd">			min_size (int): The minimum number of datapoints in terminal nodes.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="n">min_size</span> 
+		<span class="bp">self</span><span class="o">.</span><span class="n">cost_function</span> <span class="o">=</span> <span class="n">cost</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">n_trees</span> <span class="o">=</span> <span class="n">n_trees</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">trees</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span>
+
+	<span class="k">def</span> <span class="nf">_cross_validation_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function splits up the dataest into n_fold</span>
+<span class="sd">		subsamples that are split into training and test set</span>
+<span class="sd">		to be used in k-fold cross-validation training.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			dataset (list) : The original dataset.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			list.  A list of the data set split into n_fold training and </span>
+<span class="sd">			test sets.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">dataset_split</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="n">dataset_copy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+		<span class="n">fold_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_folds</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_folds</span><span class="p">):</span>
+			<span class="n">fold</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+			<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">fold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">fold_size</span><span class="p">:</span>
+				<span class="n">index</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">))</span>
+				<span class="n">fold</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+			<span class="n">dataset_split</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fold</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">dataset_split</span>
+
+	<span class="k">def</span> <span class="nf">_subsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function returns a bootstrapped version of the dataset which </span>
+<span class="sd">		has the same number of rows.</span>
+
+<span class="sd">		Args: </span>
+<span class="sd">			dataset (list) : The dataset.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			list. Bootstrapped version of the dataset.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">sample</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="n">n_sample</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+		<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_sample</span><span class="p">:</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+			<span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">sample</span>
+
+	<span class="k">def</span> <span class="nf">_convert_dataframe_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function converts a Pandas DataFrame into list of list.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			df (Pandas DataFrame) : The Pandas DataFrame of the dataset.</span>
+
+<span class="sd">			target (str) : The column name of the target variable.</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			List representation of the dataframe.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">r_dataset</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+		<span class="c1"># copy over the feature rows</span>
+		<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+			<span class="n">r_dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+		<span class="c1"># copy over the target row</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r_dataset</span><span class="p">)):</span>
+			<span class="n">r_dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+		<span class="k">return</span> <span class="n">r_dataset</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Random Forests 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Michael Harmon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>
