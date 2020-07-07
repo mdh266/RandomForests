@@ -293,55 +293,30 @@ class DecisionTreeClassifier (DecisionTree):
 			return self._predict(row, self.root)
 
 
-	def _cost(self, groups):
-		"""
-		Returns the associated cost for the split of the dataset 
-		into two groups. The cost_function will be set when the
-		tree is initialized.
+  def _cost(self, y : np.ndarray) -> float:
+      return self._gini_index(y)
+  
 
-		Args: 
-			groups (list) : List of the two subdatasets after splitting.
+  def _gini_index(self, y : np.ndarray) -> float:
+      gini = 0.0
+      y_t  = y.reshape(len(y))
 
-		Returns:
-			float. Either the gini-index or entropy of the split.
+      target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
+      size           = len(y)
 
-		"""
-		return self._gini_index(groups)
+      for target_class in target_val_cts:
+          p = target_val_cts[target_class] / size
+          gini += p * (1 - p)
 
-	def _gini_index(self, groups):
-		"""
-		Returns the gini-index for the split of the dataset into two groups.
-
-		Args:
-			groups (list) : List of the two subdatasets after splitting.
-
-		Returns:
-			float. gini-index of the split.
-		"""
-		gini = 0.0
-		for class_value in self.class_values:
-			for group in groups:
-				size = len(group)
-				if size == 0:
-					continue
-				p = [row[-1] for row in group].count(class_value) / float(size)
-				gini += (p * (1.0 - p))
-		return gini
+      return gini
 
 
-	def _make_leaf(self, group):
-		"""
-        Creates a terminal node value by selecting amoung the group that has
-        the majority.
+  def _make_leaf(self, y : np.ndarray) -> float :
+      from scipy.stats import mode
+      y_t  = y.reshape(len(y))
 
-        Args: 
-        	group (list): The subgroup of the dataset.
+      return mode(y_t)[0][0]
 
-       	Returns:
-       		int. The majority of this groups target class values.
-    	"""
-		outcomes = group[:,-1] #[row[-1] for row in group]
-		return max(set(outcomes), key=outcomes.count)
 
 
 
