@@ -4,5 +4,4 @@
 pandas==1.0.3
 scikit-learn==0.23.1
 numpy>=1.15
-pytest
-sphynx
+pytest==5.4.3
