@@ -1,7 +1,8 @@
 # requirements
 # to install using pip: pip install -r requirements.txt
 
-pandas
-numpy
+pandas==1.0.3
+scikit-learn==0.23.1
+numpy>=1.15
 pytest
-sphinx
+sphynx
