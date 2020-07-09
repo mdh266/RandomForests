@@ -26,6 +26,15 @@ test_split_data =[
    ])
   ]
 
+predict_tests = [(np.array([1,2]), {"index":0, "value":2, "left":1}, 1),
+                 (np.array([1,2]), {"index":0, "value":1, "right":0}, 0),
+                 (np.array([1,2]), {"index":1, "value":3, "left":1}, 1),
+                 (np.array([1,2]), 
+                  {"index":0, "value":1, "right": 
+                  {"index":1, "value":5, "left": 0}}, 0)
+                ]
+
+
 @pytest.mark.parametrize('data, column, value, expected', test_split_data)
 def test_split_dataset(data, column, value, expected):
   tree = DecisionTree(max_depth=5, min_size=2)
@@ -35,3 +44,10 @@ def test_split_dataset(data, column, value, expected):
 
   assert( np.array_equal(result[0], expected[0]) & 
   	      np.array_equal(result[0], expected[0]))
+
+
+@pytest.mark.parametrize('row, node, expected', predict_tests)
+def test__predict(row, node, expected):
+  tree = DecisionTree(max_depth=5, min_size=2)
+  result = tree._predict(row = row, node = node)
+  assert expected == result

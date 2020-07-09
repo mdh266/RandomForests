@@ -177,18 +177,23 @@ class DecisionTree:
       node['right'] = self._get_split(right)
       self._split(node['right'], depth+1)
 
-  def _predict(self, row, node):
+
+  def _predict(self, row : np.ndarray, node : dict):
     """
     Predicts the target value that this datapoint belongs to by recursively
     traversing tree and returns the termina leaf value corresponding 
     to this data point.
 
-    Args:
-      row (list ) : The data point to classify.
+    Parameters
+    -----------
+      row list  : 
+        The data point to classify.
 
-      node (dict ) : The current node in the tree.
+      node dict  : 
+        he current node in the tree.
 
-    Returns:
+    Returns
+    --------
       The leaf value of this data point.
     """
     if row[node['index']] < node['value']:
@@ -209,19 +214,23 @@ class DecisionTreeClassifier (DecisionTree):
 
   Attributes
   ----------
-    **max_depth** (int): The maximum depth of tree.
+    max_depth int : 
+      The maximum depth of tree.
 
-    **min_size** (int): The minimum number of datapoints in terminal nodes.
+    min_size int : 
+      The minimum number of datapoints in terminal nodes.
 
-    **n_features** (int): The number of features to be used in splitting.
+    n_features int : 
+      The number of features to be used in splitting.
 
-    **root** (dictionary): The root of the decision tree.
+    root dict : 
+      The root of the decision tree.
 
-    **columns** (list) : The feature names.
+    columns list  : 
+      The feature names.
 
-    **class_values** (list) : The list of the target class values.
-
-    **cost_function** (str) : The name of the cost function to use: 'gini'.
+    cost_function str : 
+      The name of the cost function to use: 'gini'.
   """
 
   def __init__(self, max_depth=2, min_size=2, n_features = None, cost='gini'):
@@ -230,16 +239,14 @@ class DecisionTreeClassifier (DecisionTree):
                      min_size   = min_size,
                      n_features = n_features)
 
-    self.class_values  = None
-    self.cost_function = None
     if cost == 'gini':
-      self.cost_function = cost
+      self._cost = self._gini_index
     else:
       raise NameError('Not valid cost function')
 
     
 
-  def fit(self, X=None, Y=None):
+  def fit(self, X=None, y=None):
     """
     Builds the classification decsision tree by recursively splitting 
     tree until the the maxmimum depth, max_depth of the tree is acheived or
@@ -248,33 +255,39 @@ class DecisionTreeClassifier (DecisionTree):
     n_features will be passed by the RandomForest as it is usually a subset 
     of the total number of features. However, if one is using the class as a 
     stand alone decision tree, then the n_features will automatically be 
-    
    
+    Parameters
+    ----------
+    X DataFrame : The feature dataframe
+
+    y Series : The target variables values
+
     """
-    self.class_values = list(set(row[-1] for row in train))
     self._fit(train, target)
 
   def predict(self, row):
     """
     Predict the class that this sample datapoint belongs to.
 
-    :Parameter: **row** (list or `Pandas Series <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_) : The datapoint to classify.
+    Parameters
+    ------------
+    row Pandas Serieshttp://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.html>`_) : 
+      The datapoint to classify.
 
-    :Returns: (int) The class the data points belong to.
+    Returns
+    --------
+
+    The class the data points belong to.
     """
-    if isinstance(row, list) is False:
-      return self._predict(row.tolist(), self.root)
+    if isinstance(row, np.ndarray) is False:
+      return self._predict(row.values, self.root)
     else:
       return self._predict(row, self.root)
-
-
-  def _cost(self, y : np.ndarray) -> float:
-      return self._gini_index(y)
   
 
   def _gini_index(self, y : np.ndarray) -> float:
 
-      gini = 0.0
+      gini = 1.0
       y_t  = y.reshape(len(y))
 
       target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
@@ -282,8 +295,8 @@ class DecisionTreeClassifier (DecisionTree):
 
       for target_class in target_val_cts:
           p = target_val_cts[target_class] / size
-          gini += p * (1 - p)
-
+          gini -= p ** 2
+          
       return gini
 
 
