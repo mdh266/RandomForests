@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.com/mdh266/RandomForests.svg?branch=master)](https://travis-ci.com/mdh266/RandomForests)
+[![codecov](https://codecov.io/gh/mdh266/RandomForests/branch/master/graph/badge.svg)](https://codecov.io/gh/mdh266/RandomForests)
+
 
 
 # Random Forests In Python
@@ -10,13 +12,6 @@ I started this project to better understand the way <a href="https://en.wikipedi
 You can install all the dependencies using <a href="https://pip.pypa.io/en/stable/">pip</a> (except for python and Sphinx) by entering into the commandline,
 
 	pip install -r requirements.txt
-
-## Testing
-To test the code type the following command from the terminal in the <code>RandomForest</code> directory,
-
-<code> py.test tests</code>
-
-More tests will be added in the near future.
 
 ## References
 - <a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction To Statistical Learning</a>
