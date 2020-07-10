@@ -122,7 +122,7 @@ class DecisionTree(BaseEstimator):
 
     # randomily select features to consider
     while len(features) < self.n_features:
-      index = randrange(dataset.shape[1] - 1)
+      index = randrange(self.n_features)
       features.add(index)
 
     # loop through the number of features and values of the data
@@ -130,9 +130,8 @@ class DecisionTree(BaseEstimator):
     # to the derived classes cost function value of the tested 
     # split
     for column in features:
-      print(column)
       for row in dataset[:,column]:
-        groups = self._test_split(dataset, index, row)
+        groups = self._test_split(dataset, column, row)
         gini   = self._cost(column, groups)
         if gini < b_score:
           b_index  = column
@@ -150,12 +149,16 @@ class DecisionTree(BaseEstimator):
     Note: Leaves are just a value, which is determined
     in the derived class.
 
-    Params:
-      node (dictionary): The current node in the tree.
+    Parameters
+    -----------
+      node dictionary:
+        The current node in the tree.
 
-      depth (int) : The depth of node curr.
+      depth int : 
+        The depth of node curr.
 
-    Returns: None
+    Returns
+    --------]
     """
     left, right = node['groups']
     del(node['groups'])
