@@ -132,15 +132,15 @@ class DecisionTree(BaseEstimator):
     for column in features:
       for row in dataset[:,column]:
         groups = self._test_split(dataset, column, row)
-        gini   = self._cost(column, groups)
+        gini   = self._cost(groups)
         if gini < b_score:
-          b_index  = column
-          b_value  = row
-          b_score  = gini
-          b_groups = groups
+          b_column  = column
+          b_value   = row
+          b_score   = gini
+          b_groups  = groups
 
 
-    return {'index':b_index, 'value':b_value, 'groups':b_groups}
+    return {'column':b_column, 'value':b_value, 'groups':b_groups}
 
   def _split(self, node : dict, depth : int) -> None:
     """
@@ -193,7 +193,7 @@ class DecisionTree(BaseEstimator):
 
     Parameters
     -----------
-      row list  : 
+      row np.ndarray  : 
         The data point to classify.
 
       node dict  : 
@@ -203,7 +203,7 @@ class DecisionTree(BaseEstimator):
     --------
       The leaf value of this data point.
     """
-    if row[node['index']] < node['value']:
+    if row[node['column']] < node['value']:
       if isinstance(node['left'], dict):
         return self._predict(row, node['left'])
       else:
@@ -292,7 +292,7 @@ class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
       return self._predict(row, self.root)
   
 
-  def _cost_gini(self, column : int, groups : tuple) -> float:
+  def _cost_gini(self, groups : tuple) -> float:
 
     cost = 0.0
     for group in groups:

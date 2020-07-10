@@ -26,12 +26,12 @@ test_split_data =[
    ])
   ]
 
-predict_tests = [(np.array([1,2]), {"index":0, "value":2, "left":1}, 1),
-                 (np.array([1,2]), {"index":0, "value":1, "right":0}, 0),
-                 (np.array([1,2]), {"index":1, "value":3, "left":1}, 1),
+predict_tests = [(np.array([1,2]), {"column":0, "value":2, "left":1}, 1),
+                 (np.array([1,2]), {"column":0, "value":1, "right":0}, 0),
+                 (np.array([1,2]), {"column":1, "value":3, "left":1}, 1),
                  (np.array([1,2]), 
-                  {"index":0, "value":1, "right": 
-                  {"index":1, "value":5, "left": 0}}, 0)
+                  {"column":0, "value":1, "right": 
+                  {"column":1, "value":5, "left": 0}}, 0)
                 ]
 
 
