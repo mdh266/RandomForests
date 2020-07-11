@@ -36,14 +36,16 @@ class DecisionTree(BaseEstimator):
 
     self.max_depth    = max_depth
     self.min_size     = min_size
-
+    self.n_features   = None
+    
     if n_features is not None:
       self.n_features = n_features
-    else:
-      self.n_features = None
 
     self.root         = None
 
+  def _set_features(self, X):
+    if self.n_features is None:
+      self.n_features = X.shape[1]
 
   def _fit(self, X = None, Y = None):
     """
@@ -64,8 +66,9 @@ class DecisionTree(BaseEstimator):
       Y Series of the targetvariable
     """
         
-    if self.n_features is None:
-      self.n_features = dataset.shape[1] - 1
+    self._set_features(X)
+    
+    dataset  = _make_dataset(X = X, y = y)
             
     # perform optimal split for the root
     self.root = self._get_split(dataset)
@@ -112,7 +115,7 @@ class DecisionTree(BaseEstimator):
       Dictionary of the best splitting feature of randomly chosen and 
       the best splitting value.
     """
-    if (self.n_features > dataset.shape[1] - 1):
+    if (self.n_features != dataset.shape[1] - 1):
         raise AttributeError("n_features != X.shape[1]") 
     
     b_index, b_value, b_score, b_groups = 999, 999, 999, None
@@ -269,7 +272,7 @@ class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
     y Series : The target variables values
 
     """
-    self._fit(train, target)
+    self._fit(X, y)
 
     return self
 

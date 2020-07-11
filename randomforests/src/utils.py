@@ -17,8 +17,8 @@ def _make_dataset(X, y):
 		appended to the right most column
 
 	"""
-	feats = X
-	feats = y
+	feats  = X
+	target = y
 
 	# convert the the dataframe/series to numpy array if 
 	# not in numpy array format

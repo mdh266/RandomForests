@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import pandas as pd
 from src.Trees import DecisionTree
 
 
@@ -51,3 +52,21 @@ def test__predict(row, node, expected):
   tree = DecisionTree(max_depth=5, min_size=2)
   result = tree._predict(row = row, node = node)
   assert expected == result
+
+
+def test_init():
+
+  tree = DecisionTree(3,2,1)
+
+  assert (tree.max_depth == 3 and
+          tree.min_size  == 2 and
+          tree.n_features == 1)
+
+def test_set_features():
+  tree = DecisionTree()
+  X    = pd.DataFrame({"x1":[0,1],"x2":[1,0]})
+  tree._set_features(X)
+
+  assert tree.n_features == 2
+
+
