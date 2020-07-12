@@ -69,4 +69,9 @@ def test_set_features():
 
   assert tree.n_features == 2
 
+def test_set_features_error():
+  tree = DecisionTree(n_features=5)
+  X    = pd.DataFrame({"x1":[0,1],"x2":[1,0]})
+  with pytest.raises(Exception):
+    tree._set_features(X)
 
