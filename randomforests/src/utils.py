@@ -3,7 +3,9 @@ import numpy as np
 
 def _make_dataset(X, y):
 	"""
-	This function converts a Pandas Dataframe 
+	This function converts a Pandas Dataframe X and
+	the Pandas Series y as a new numpy array
+
 
 	Parameters
 	---------
@@ -13,9 +15,8 @@ def _make_dataset(X, y):
 
 	Returns
 	--------
-		List representation of the datafarme with y
-		appended to the right most column
-
+		np.ndarray The datafarme X with y appended to the right 
+		most column 
 	"""
 	feats  = X
 	target = y
@@ -34,7 +35,7 @@ def _make_dataset(X, y):
 		else:
 			raise TypeError("X needs to be NumPy array or Pandas Series")
 	
-	# append the column vector
+	# append the column vector as the right most column
 	dataset = np.append(feats,target.reshape(len(target),1),axis=1)
 
 	return dataset

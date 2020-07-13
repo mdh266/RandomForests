@@ -9,11 +9,12 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 
 class DecisionTree(BaseEstimator):
   """
-  A decision tree base class. 
+  A decision tree abstract base class. 
 
   Classification and Regression Trees will be derived class that override 
-  certain functions of this class.  This was done because many common
-  methods, so to reduce code they are written here in the base class.
+  certain functions of this class, mainly the cost function and make leaf
+  function. They will also need a .fit and .predict function.
+
 
   Parameters
   ------------
@@ -44,11 +45,23 @@ class DecisionTree(BaseEstimator):
     self.root         = None
 
 
-  def _set_features(self, X):
+  def _set_features(self, X : np.ndarray) -> None:
+    """
+    Sets the number of features we want use to search for the best split.
+    This isn't useful for decision trees specifically, but useful for 
+    Random Forests where we don't use all features possible, but use 
+    a random subset.
+
+
+    Parameters
+    ----------
+    X  np.ndarray The feature dataset
+
+    """
     if self.n_features is None:
       self.n_features = X.shape[1]
     else:
-      if (self.n_features != dataset.shape[1] - 1):
+      if (self.n_features != X.shape[-1]):
         raise AttributeError("n_features != X.shape[1]") 
 
   def _fit(self, X = None, Y = None):
@@ -107,7 +120,7 @@ class DecisionTree(BaseEstimator):
   def _get_split(self, dataset : np.ndarray) -> dict:
     """
     Select the best splitting point and feature for a dataset 
-    using a random selection of self.n_features number of features.
+    using a random subset of self.n_features number of features.
 
     Parameters
     -----------  
@@ -116,7 +129,7 @@ class DecisionTree(BaseEstimator):
       
     Returns
     -------
-      Dictionary of the best splitting feature of randomly chosen and 
+      dict Dictionary of the best splitting feature of randomly chosen and 
       the best splitting value.
     """
     
@@ -298,7 +311,21 @@ class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
   
 
   def _cost_gini(self, groups : tuple) -> float:
+    """
+    Get the cost of the spit of the dataframe. Groups
+    will be the tuple containing the left and right
+    splits.
 
+    Parameters
+    -----------
+    groups tuple :  The left and right versions of the dataset
+      after the split
+
+    Returns
+    -------
+    float : The cost of the split.
+
+    """
     cost = 0.0
     for group in groups:
       cost += self._gini_index(group[:,-1])
@@ -307,23 +334,37 @@ class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
 
 
   def _gini_index(self, y : np.ndarray) -> float:
+    """
+    Gini index for a single target vector.
+    """
+    gini = 0.0
+    y_t  = y.reshape(len(y))
 
-      gini = 0.0
-      y_t  = y.reshape(len(y))
+    target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
+    size           = len(y)
 
-      target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
-      size           = len(y)
-
-      if size != 0:
-        for target_class in target_val_cts:
-            p = target_val_cts[target_class] / size
-            gini += p * (1 - p)
-          
-      return gini
+    if size != 0:
+      for target_class in target_val_cts:
+          p = target_val_cts[target_class] / size
+          gini += p * (1 - p)
+        
+    return gini
 
   def _make_leaf(self, y : np.ndarray) -> float :
+    """
+    Makest the leaf of the tree by taking the value of the class
+    that has the largest size.
 
-      from scipy.stats import mode
-      y_t  = y.reshape(len(y))
+    Parameters
+    ----------
+    y np.ndarray : The target classes 
 
-      return mode(y_t)[0][0]
+    Returns
+    -------
+    The leaf value.
+
+    """
+    from scipy.stats import mode
+    y_t  = y.reshape(len(y))
+
+    return mode(y_t)[0][0]

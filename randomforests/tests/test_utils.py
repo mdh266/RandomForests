@@ -27,7 +27,6 @@ def test_make_datatset():
 
 dataset_test = [(1,2),(None,None)]
 
-
 @pytest.mark.parametrize('X, y', dataset_test)
 def test_make_dataset_errors(X,y):
 	with pytest.raises(Exception):
