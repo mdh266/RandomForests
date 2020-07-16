@@ -64,6 +64,7 @@ class DecisionTree(BaseEstimator):
       if (self.n_features != X.shape[-1]):
         raise AttributeError("n_features != X.shape[1]") 
 
+
   def _fit(self, X = None, Y = None):
     """
     Builds the decsision tree by recursively splitting tree until the
@@ -139,6 +140,7 @@ class DecisionTree(BaseEstimator):
     features = set()
 
     # randomily select features to consider
+    # TODO: push this to another function or into set_features?
     while len(features) < self.n_features:
       index = randrange(self.n_features)
       features.add(index)
@@ -180,27 +182,37 @@ class DecisionTree(BaseEstimator):
     """
     left, right = node['groups']
     del(node['groups'])
-    # check for a no split
-    if not left or not right:
-      node['left'] = node['right'] = self._make_leaf(left + right)
+
+    # check for a no split in left
+    if left.size == 0:
+      node['left'] = node['right'] = self._make_leaf(right[:,-1])
+      return 
+     # check for a no split in right
+    elif right.size == 0:
+      node['left'] = node['right'] = self._make_leaf(left[:,-1])
       return
-    # check for max depth
-    if depth >= self.max_depth:
-      node['left'] = self._make_leaf(left)
-      node['right'] = self._make_leaf(right)
-      return
-    # process left child
-    if len(left) <= self.min_size:
-      node['left'] = self._make_leaf(left)
+    #check for max depth
+    elif depth >= self.max_depth:
+        node['left'] = self._make_leaf(left[:,-1])
+        node['right'] = self._make_leaf(right[:,-1])
+        return
+    # else 
     else:
-      node['left'] = self._get_split(left)
-      self._split(node['left'], depth+1)
-    # process right child
-    if len(right) <= self.min_size:
-      node['right'] = self._make_leaf(right)
-    else:
-      node['right'] = self._get_split(right)
-      self._split(node['right'], depth+1)
+        # process left child
+        if len(left) <= self.min_size:
+          node['left'] = self._make_leaf(left[:,-1])
+
+        else:
+          node['left'] = self._get_split(left)
+          self._split(node['left'], depth+1)
+
+        # process right child
+        if len(right) <= self.min_size:
+          node['right'] = self._make_leaf(right[:,-1])
+
+        else:
+          node['right'] = self._get_split(right)
+          self._split(node['right'], depth+1)
 
 
   def _predict(self, row : np.ndarray, node : dict):
