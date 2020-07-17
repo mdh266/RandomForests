@@ -2,9 +2,11 @@ from random import randrange
 import pandas as pd
 import numpy as np
 import math
+from functools import partial
 
 from src.utils import _make_dataset
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.metrics import accuracy_score
 
 
 class DecisionTree(BaseEstimator):
@@ -65,7 +67,7 @@ class DecisionTree(BaseEstimator):
         raise AttributeError("n_features != X.shape[1]") 
 
 
-  def _fit(self, X = None, Y = None):
+  def _fit(self, X = None, y = None):
     """
     Builds the decsision tree by recursively splitting tree until the
     the maxmimum depth, max_depth, of the tree is acheived or the nodes
@@ -217,7 +219,7 @@ class DecisionTree(BaseEstimator):
 
   def _predict(self, row : np.ndarray, node : dict):
     """
-    Predicts the target value that this datapoint belongs to by recursively
+    Predicts the target value for one single row to by recursively
     traversing tree and returns the termina leaf value corresponding 
     to this data point.
 
@@ -244,6 +246,29 @@ class DecisionTree(BaseEstimator):
       else:
         return node['right']
 
+
+  def predict(self, rows : np.ndarray) -> int:
+    """
+    Predict the class that this sample datapoint belongs to.
+
+    Parameters
+    ----------
+    rows  np.ndarray: 
+      The datapoints to classify.
+
+    Returns
+    --------
+      The predicted class the data points belong to.
+    """
+    if isinstance(rows, np.ndarray) is False:
+      x = rows.to_numpy()   
+    else:
+      x = rows
+
+    predictor = partial(self._predict, **{"node":self.root})
+    preds     = np.apply_along_axis(predictor, axis=1, arr=x)
+
+    return preds
   
 class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
   """
@@ -303,24 +328,20 @@ class DecisionTreeClassifier (DecisionTree, ClassifierMixin):
 
     return self
 
-  def predict(self, row : np.ndarray) -> int:
+  def score(self, X=None, y=None):
     """
-    Predict the class that this sample datapoint belongs to.
-
+    Returns the accuracy of the model
+    
     Parameters
     ----------
-    row  np.ndarray: 
-      The datapoint to classify.
+    X DataFrame : The feature dataframe
 
-    Returns
-    --------
-      The predicted class the data points belong to.
+    y Series : The target variables values
+
     """
-    if isinstance(row, np.ndarray) is False:
-      return self._predict(row.values, self.root)
-    else:
-      return self._predict(row, self.root)
-  
+
+    return accuracy_score(self.predict(X),y)
+
 
   def _cost_gini(self, groups : tuple) -> float:
     """

@@ -53,7 +53,7 @@ predict_tests = [(np.array([1,2]), {"column":0, "value":2, "left":1}, 1),
 
 
 @pytest.mark.parametrize('row, node, expected', predict_tests)
-def test__predict(row, node, expected):
+def test_private_predict(row, node, expected):
   tree = DecisionTree(max_depth=5, min_size=2)
   result = tree._predict(row = row, node = node)
   assert expected == result
