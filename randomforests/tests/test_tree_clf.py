@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.Trees import DecisionTreeClassifier
+from src.TreeClassifier import DecisionTreeClassifier
 
 
 leaf_tests =[(np.array([[0.],[0.], [1.],[0.]]),0),
@@ -115,7 +115,7 @@ def test__split(test_node, depth, expected):
   assert test_node == expected
 
 
-test_public_predict = [
+public_predict_test = [
   (np.array([[0. , 0.1],
              [0. , 0.5],
              [0. , 0.7],
@@ -127,16 +127,28 @@ test_public_predict = [
 ]
 
 
-@pytest.mark.parametrize('X, y', test_public_predict)
+@pytest.mark.parametrize('X, y', public_predict_test)
 def test_predict(X, y):
   tree   = DecisionTreeClassifier()
   model  = tree.fit(X, y)
   assert np.array_equal(model.predict(X),y)
 
 
+get_params_tests = [
+    ({"max_depth":3, "min_size":5, "n_features":None, "cost":'gini'},
+     {"max_depth":3, "min_size":5, "n_features":None, "cost":'gini'})
+]
+
+@pytest.mark.parametrize('test_dict, expected_dict', get_params_tests)
+def test_get_params(test_dict, expected_dict):
+    tree = DecisionTreeClassifier(max_depth = test_dict["max_depth"],
+                                  min_size  = test_dict["min_size"],
+                                  n_features = test_dict["n_features"])
+
+    assert expected_dict == tree.get_params()
+
+def test_default_getparams():
+    tree = DecisionTreeClassifier()
+    assert {"max_depth":2, "min_size":1, "n_features":None, "cost":'gini'} == tree.get_params()
 
 
-# @pytest.mark.xfail(raises=AttributeError)
-# def test_get_split_exception():
-#   tree = DecisionTreeClassifier(n_features=2)
-#   tree._get_split(np.array([[0,1],[1,0]]))
