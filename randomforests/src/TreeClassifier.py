@@ -4,7 +4,7 @@ import scipy as sp
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import accuracy_score
 
-from src.Trees import DecisionTree
+from src.Tree import DecisionTree
 
 class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
     """

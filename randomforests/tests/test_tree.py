@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import pandas as pd
-from src.Trees import DecisionTree
+from src.Tree import DecisionTree
 
 
 test_split_data =[
