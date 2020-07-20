@@ -67,7 +67,7 @@ def test_get_split(n_features, dataset, expected):
   tree      = DecisionTreeClassifier(n_features = n_features)
   result    = tree._get_split(dataset)
   column    = result["column"] == expected["column"]
-  value     = result["value"] == expected["value"]
+  value     = result["value"]  == expected["value"]
 
   left_grp  = np.array_equal(result["groups"][0],expected["groups"][0])
   right_grp = np.array_equal(result["groups"][1],expected["groups"][1])
@@ -141,8 +141,8 @@ get_params_tests = [
 
 @pytest.mark.parametrize('test_dict, expected_dict', get_params_tests)
 def test_get_params(test_dict, expected_dict):
-    tree = DecisionTreeClassifier(max_depth = test_dict["max_depth"],
-                                  min_size  = test_dict["min_size"],
+    tree = DecisionTreeClassifier(max_depth  = test_dict["max_depth"],
+                                  min_size   = test_dict["min_size"],
                                   n_features = test_dict["n_features"])
 
     assert expected_dict == tree.get_params()
