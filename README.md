@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.com/mdh266/RandomForests.svg?branch=master)](https://travis-ci.com/mdh266/RandomForests)
+[![codecov](https://codecov.io/gh/mdh266/RandomForests/branch/master/graph/badge.svg)](https://codecov.io/gh/mdh266/RandomForests)
+
 
 
 # Random Forests In Python
