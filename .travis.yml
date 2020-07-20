@@ -6,6 +6,6 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - pytest --cov-report term --cov=randomforests/tests
+  - pytest #--cov-report term --cov=randomforests/tests
 after_success:
   - codecov
