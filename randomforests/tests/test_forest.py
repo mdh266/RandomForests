@@ -1,10 +1,6 @@
-import pytest
-import pandas as pd
 import numpy as np
 
 from src.Forest import RandomForest
-
-
 
 def test_init():
     forest = RandomForest()

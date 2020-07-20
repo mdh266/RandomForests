@@ -32,6 +32,7 @@ class RandomForest:
         self.min_size      = min_size
         self.n_trees       = n_trees
 
+        self.trees         = None
 
     def _subsample(self, dataset : np.ndarray) -> np.ndarray:
         """
@@ -48,7 +49,20 @@ class RandomForest:
         """
 
         number_of_rows = dataset.shape[0]
+        sample_of_rows = number_of_rows
         random_indices = np.random.choice(number_of_rows,
-                                          size=number_of_rows,
+                                          size=sample_of_rows,
                                           replace=True)
         return dataset[random_indices,:]
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
+
+    def get_params(self, deep=True):
+        return {"max_depth" : self.max_depth,
+                "min_size"  : self.min_size,
+                "cost"      : self.cost,
+                "n_trees"   : self.n_trees}
+

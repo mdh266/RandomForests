@@ -37,8 +37,6 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
                          min_size   = min_size,
                          n_features = n_features)
 
-        self._cost = self._cost_gini
-
         if cost == 'gini':
             self.cost  = "gini"
             self._cost = self._cost_gini
@@ -102,18 +100,6 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
             cost += self._gini_index(group[:,-1])
 
         return cost
-
-
-    def set_params(self, **parameters):
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
-
-    def get_params(self, deep=True):
-        return {"max_depth" : self.max_depth,
-                "min_size"  : self.min_size,
-                "n_features": self.n_features,
-                "cost"      : self.cost}
 
 
     def _gini_index(self, y : np.ndarray) -> float:

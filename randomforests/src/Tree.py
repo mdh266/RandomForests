@@ -1,7 +1,6 @@
 from random import randrange
 from functools import partial
 
-import pandas as pd
 import numpy as np
 
 from src.utils import _make_dataset
@@ -37,6 +36,7 @@ class DecisionTree:
     self.max_depth    = max_depth
     self.min_size     = min_size
     self.n_features   = None
+    self.cost         = None
 
     if n_features is not None:
       self.n_features = n_features
@@ -60,8 +60,8 @@ class DecisionTree:
     if self.n_features is None:
       self.n_features = X.shape[1]
     else:
-      if (self.n_features != X.shape[-1]):
-        raise AttributeError("n_features != X.shape[1]") 
+      if (self.n_features > X.shape[1]):
+        raise AttributeError("n_features > X.shape[1]")
 
 
   def _fit(self, X = None, y = None):
@@ -266,4 +266,16 @@ class DecisionTree:
     preds     = np.apply_along_axis(predictor, axis=1, arr=x)
 
     return preds
+
+  def set_params(self, **parameters):
+    for parameter, value in parameters.items():
+      setattr(self, parameter, value)
+    return self
+
+  def get_params(self, deep=True):
+    return {"max_depth" : self.max_depth,
+            "min_size"  : self.min_size,
+            "n_features": self.n_features,
+            "cost"      : self.cost}
+
   

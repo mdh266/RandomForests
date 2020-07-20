@@ -129,9 +129,9 @@ public_predict_test = [
 
 @pytest.mark.parametrize('X, y', public_predict_test)
 def test_predict(X, y):
-  tree   = DecisionTreeClassifier()
-  model  = tree.fit(X, y)
-  assert np.array_equal(model.predict(X),y)
+    tree   = DecisionTreeClassifier()
+    model  = tree.fit(X, y)
+    assert np.array_equal(model.predict(X),y)
 
 
 get_params_tests = [
