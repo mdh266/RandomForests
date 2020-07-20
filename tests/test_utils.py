@@ -2,7 +2,7 @@ import pytest
 import pandas as pd 
 import numpy as np
 
-from src.utils import _make_dataset 
+from randomforests.utils import _make_dataset
 
 def test_make_datatset():
 

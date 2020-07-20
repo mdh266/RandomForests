@@ -1,6 +1,6 @@
-from src.utils import _make_dataset
-from src.Forest import RandomForest
-from src.TreeClassifier import DecisionTreeClassifier
+from randomforests.utils import _make_dataset
+from randomforests.Forest import RandomForest
+from randomforests.TreeClassifier import DecisionTreeClassifier
 
 from math import sqrt
 import pandas as pd

@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.Forest import RandomForest
+from randomforests.Forest import RandomForest
 
 def test_init():
     forest = RandomForest()

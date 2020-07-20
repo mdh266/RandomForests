@@ -3,7 +3,7 @@ from functools import partial
 
 import numpy as np
 
-from src.utils import _make_dataset
+from randomforests.utils import _make_dataset
 
 class DecisionTree:
   """

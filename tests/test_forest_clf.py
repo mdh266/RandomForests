@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from src.utils import _make_dataset
-# from src.TreeClassifier import DecisionTreeClassifier
-from src.ForestClassifier import RandomForestClassifier
+from randomforests.utils import _make_dataset
+# from randomforests.TreeClassifier import DecisionTreeClassifier
+from randomforests.ForestClassifier import RandomForestClassifier
 
 
 def test_default():

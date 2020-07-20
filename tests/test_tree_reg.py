@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.TreeRegressor import DecisionTreeRegressor
+from randomforests.TreeRegressor import DecisionTreeRegressor
 
 
 leaf_tests =[(np.array([[0.],[0.], [1.],[0.]]),0.25),

@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.TreeClassifier import DecisionTreeClassifier
+from randomforests.TreeClassifier import DecisionTreeClassifier
 
 
 leaf_tests =[(np.array([[0.],[0.], [1.],[0.]]),0),
