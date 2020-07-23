@@ -25,7 +25,7 @@ def test_make_datatset():
 	assert np.array_equal(dataset, _make_dataset(X=X, y=y))
 
 
-dataset_test = [(1,2),(None,None)]
+dataset_test = [(1,2),(None,None), (np.array([[2.771244718,1.784783929]]),None)]
 
 @pytest.mark.parametrize('X, y', dataset_test)
 def test_make_dataset_errors(X,y):

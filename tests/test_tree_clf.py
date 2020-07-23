@@ -152,3 +152,8 @@ def test_default_getparams():
     assert {"max_depth":2, "min_size":1, "n_features":None, "cost":'gini'} == tree.get_params()
 
 
+def test_cost_exception():
+    with pytest.raises(Exception):
+        tree = DecisionTreeClassifier(cost="mse")
+
+

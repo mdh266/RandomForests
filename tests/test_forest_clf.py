@@ -64,6 +64,7 @@ def test_fit():
 
     assert len(model.trees) == 10
 
+
 # def test_predict():
 #     """
 #     Cant really do good test since it has random sample with replacement
@@ -76,8 +77,9 @@ def test_fit():
 #     y = np.array([0, 0, 1, 1)
 #
 #     dataset = _make_dataset(X,y)
+#
+#     forest = RandomForestClassifier()
+#     model  = forest.fit(X,y)
+#
+#     assert len(model.trees) == 10
 
-    forest = RandomForestClassifier()
-    model  = forest.fit(X,y)
-
-    assert len(model.trees) == 10
