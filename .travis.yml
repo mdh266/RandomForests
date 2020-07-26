@@ -3,11 +3,12 @@ python:
 - "3.6"
 - "3.7"
 - "3.8"
-install:
+before_install:
 - pip install pytest==5.4.3
 - pip install pytest-cov==2.10.0
 - pip install codecov==2.1.8
-- python setup.py develop
+install:
+- python setup.py install
 script:
 - pytest --cov
 after_success:
