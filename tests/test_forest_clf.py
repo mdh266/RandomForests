@@ -65,21 +65,7 @@ def test_fit():
     assert len(model.trees) == 10
 
 
-# def test_predict():
-#     """
-#     Cant really do good test since it has random sample with replacement
-#     """
-#     X = np.array([[0.1],
-#                   [0.5],
-#                   [0.7],
-#                   [0.9]])
-#
-#     y = np.array([0, 0, 1, 1)
-#
-#     dataset = _make_dataset(X,y)
-#
-#     forest = RandomForestClassifier()
-#     model  = forest.fit(X,y)
-#
-#     assert len(model.trees) == 10
+def test_cost_exception():
+    with pytest.raises(Exception):
+        forest = RandomForestClassifier(cost="mse")
 

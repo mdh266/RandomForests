@@ -25,7 +25,7 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
     """
 
-    def __init__(self, max_depth=2, min_size=1, n_features = None):
+    def __init__(self, max_depth : int = 2, min_size : int = 1, n_features : int = None):
 
         super().__init__(max_depth  = max_depth,
                          min_size   = min_size,
@@ -89,8 +89,10 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         """
         cost = 0.0
         for group in groups:
-            cost += np.std(group[:,-1]) ** 2
-
+            if len(group) > 0:
+                cost += np.std(group[:,-1]) ** 2
+            else:
+                continue
         return cost
 
     def _make_leaf(self, y : np.ndarray) -> float :
@@ -106,6 +108,8 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         The leaf value.
 
         """
-        y_t  = y.reshape(len(y))
+        y_t    = y.reshape(len(y))
 
         return np.mean(y_t)
+
+

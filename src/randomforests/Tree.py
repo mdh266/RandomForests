@@ -31,7 +31,7 @@ class DecisionTree:
     The root of the decision tree.
 
   """
-  def __init__(self, max_depth = 2, min_size = 1, n_features = None):
+  def __init__(self, max_depth : int= 2, min_size : int = 1, n_features : int = None):
 
     self.max_depth    = max_depth
     self.min_size     = min_size
