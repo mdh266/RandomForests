@@ -28,7 +28,7 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         The cost function
     """
 
-    def __init__(self, max_depth=2, min_size=1, n_features = None, cost='gini'):
+    def __init__(self, max_depth : int = 2, min_size : int = 1, n_features : int= None, cost : str ='gini'):
 
         super().__init__(max_depth  = max_depth,
                          min_size   = min_size,
