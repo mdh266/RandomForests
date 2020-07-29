@@ -1,0 +1,40 @@
+import pytest
+import numpy as np
+import pandas as pd
+from randomforests.utils import _make_dataset
+from randomforests.ForestRegressor import RandomForestRegressor
+
+
+def test_make_bootsrap():
+    """
+    Cant really do good test since it has random sample with replacement
+    """
+    X = np.array([[0.1],
+                  [0.5],
+                  [0.7],
+                  [0.9]])
+
+    y = np.array([0.1, 0.5, 0.7, 0.9])
+
+    dataset = _make_dataset(X,y)
+
+    forest = RandomForestRegressor()
+    tree   = forest._bootstrap_tree(dataset=dataset, n_features=1)
+
+    assert tree.n_features == 1
+
+def test_fit():
+    """
+    Cant really do good test since it has random sample with replacement
+    """
+    X = np.array([[0.1],
+                  [0.5],
+                  [0.7],
+                  [0.9]])
+
+    y = np.array([0.1, 0.5, 0.7, 0.9])
+
+    forest = RandomForestRegressor()
+    model  = forest.fit(X,y)
+
+    assert len(model.trees) == 10
