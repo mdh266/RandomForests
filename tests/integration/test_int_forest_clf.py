@@ -48,6 +48,9 @@ predict_tests = [(np.array([0, 0, 1, 1])),
 def test_predict(y):
     """
     Cant really do good test since it has random sample with replacement
+
+    But check to make sure the shape is consistent and the predicted values
+    are with in the training set range.
     """
     X = np.array([[0.1],
                   [0.5],

@@ -7,7 +7,7 @@ from randomforests.Tree import DecisionTree
 
 class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
     """
-    A decision tree classifier that extends the DecisionTree class.
+    A decision tree regressor that extends the DecisionTree class.
 
     Attributes
     ----------
@@ -20,9 +20,11 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
       n_features int :
         The number of features to be used in splitting.
 
-      root dict :
-        The root of the decision tree.
+      cost str :
+        The cost function
 
+       root dict :
+         The root dictionary for the tree
     """
 
     def __init__(self, max_depth : int = 2, min_size : int = 1, n_features : int = None):
@@ -37,8 +39,8 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
     def fit(self, X=None, y=None):
         """
-        Builds the classification decsision tree by recursively splitting
-        tree until the the maxmimum depth, max_depth of the tree is acheived or
+        Builds the regression decision tree by recursively splitting
+        tree until the the maximum depth, max_depth of the tree is acheived or
         the node have the minimum number of training points, min_size.
 
         n_features will be passed by the RandomForest as it is usually a subset
@@ -47,10 +49,13 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         Parameters
         ----------
-        X DataFrame : The feature dataframe
+        X DataFrame : The feature dataframe or numpy array of features
 
         y Series : The target variables values
 
+        Returns
+        -------
+        Fitted model
         """
         self._fit(X, y)
 
@@ -58,7 +63,7 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
     def score(self, X=None, y=None):
         """
-        Returns the accuracy of the model
+        Returns the mean squared error of the model
 
         Parameters
         ----------
@@ -66,6 +71,9 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         y Series : The target variables values
 
+        Returns
+        -------
+        float
         """
 
         return mean_squared_error(self.predict(X),y)
@@ -97,7 +105,7 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
     def _make_leaf(self, y : np.ndarray) -> float :
         """
-        Makest the leaf of the tree by taking the mean of the target values
+        Makes the leaf of the tree by taking the mean of the target values
 
         Parameters
         ----------
@@ -108,7 +116,7 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         The leaf value.
 
         """
-        y_t    = y.reshape(len(y))
+        y_t = y.reshape(len(y))
 
         return np.mean(y_t)
 

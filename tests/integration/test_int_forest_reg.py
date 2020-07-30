@@ -38,3 +38,33 @@ def test_fit():
     model  = forest.fit(X,y)
 
     assert len(model.trees) == 10
+
+predict_tests = [(np.array([0.1, 0.5, 0.7, 0.9])),
+                 (pd.Series([0.1, 0.5, 0.7, 0.9]))]
+
+@pytest.mark.parametrize('y', predict_tests)
+def test_predict(y):
+    """
+    Cant really do good test since it has random sample with replacement
+
+    But check to make sure the shape is consistent and the predicted classes
+    with the training set target values.
+    """
+
+    X = np.array([[0., 0.1, 0.1],
+                  [0., 0.5, 0.5],
+                  [0., 0.7, 0.7],
+                  [0., 0.9, 0.9]])
+
+    y = np.array([0.1, 0.5, 0.7, 0.9])
+
+    forest = RandomForestRegressor()
+    model  = forest.fit(X,y)
+
+    preds  = model.predict(X)
+    correct_size  = len(preds) == 4
+
+    bounded_max   = np.max(preds) <= 0.9
+    bounded_in    = np.min(preds) >= 0.1
+
+    assert correct_size and bounded_in and bounded_max

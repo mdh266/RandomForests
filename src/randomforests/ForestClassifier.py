@@ -11,6 +11,27 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import accuracy_score
 
 class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
+    """
+    A random forest classification model that extends the abstract base class
+    of random forest.
+
+    Attributes
+    ----------
+      max_depth int :
+        The maximum depth of tree.
+
+      min_size int :
+        The minimum number of datapoints in terminal nodes.
+
+      n_features int :
+        The number of features to be used in splitting.
+
+      n_trees:
+        The number of trees in the forest
+
+      cost str :
+        The cost function
+    """
 
     def __init__(self, n_trees : int = 10, max_depth : int =2, min_size : int =1, cost : str ='gini'):
         """
@@ -33,10 +54,7 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
 
     def fit(self, X, y = None):
         """
-        Fit the random forest to the training set train.  If a test set is provided
-        then the return value wil be the predictions of the RandomForest on the
-        test set.  If no test set is provide nothing is returned.
-
+        Fit the random forest to the training set train.
 
         Note: Below we set the number of features to use in the splitting to be
         the square root of the number of total features in the dataset.
@@ -54,25 +72,25 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
         return self
 
 
-    def predict(self, rows : pd.DataFrame) -> int:
+    def predict(self, x : pd.DataFrame) -> int:
         """
         Predict the class that this sample datapoint belongs to.
 
         Parameters
         ----------
-        rows  np.ndarray:
+        x  np.ndarray:
           The datapoints to classify.
 
         Returns
         --------
           The predicted class the data points belong to.
         """
-        if isinstance(rows, np.ndarray) is False:
-            x = rows.to_numpy()
+        if isinstance(x, np.ndarray) is False:
+            rows = x.to_numpy()
         else:
-            x = rows
+            rows = x
 
-        preds = [tree.predict(x) for tree in self.trees]
+        preds = [tree.predict(rows) for tree in self.trees]
 
         return sp.stats.mode(preds)[0][0]
 

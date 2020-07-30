@@ -11,11 +11,12 @@ class DecisionTree:
 
   Classification and Regression Trees will be derived class that override 
   certain functions of this class, mainly the cost function and make leaf
-  function. They will also need a .fit and .predict function.
+  function. They will also need a .fit, .predict and .score function to be
+  compatible with scikit-learn.
 
 
-  Parameters
-  ------------
+  Attributes
+  -----------
   max_depth int: default=2
     The maximum depth of tree.
 
@@ -25,9 +26,10 @@ class DecisionTree:
   n_features int: min_size=None
     The number of features to be used in splitting.
 
-  Attributes
-  -----------
-  root dictionary dict:
+  cost str:
+    The name of the cost function.
+
+  root dict:
     The root of the decision tree.
 
   """
@@ -244,26 +246,26 @@ class DecisionTree:
         return node['right']
 
 
-  def predict(self, rows : np.ndarray) -> int:
+  def predict(self, x : np.ndarray) -> int:
     """
     Predict the class that this sample datapoint belongs to.
 
     Parameters
     ----------
-    rows  np.ndarray: 
+    x  np.ndarray:
       The datapoints to classify.
 
     Returns
     --------
       The predicted class the data points belong to.
     """
-    if isinstance(rows, np.ndarray) is False:
-      x = rows.to_numpy()   
+    if isinstance(x, np.ndarray) is False:
+      rows = x.to_numpy()
     else:
-      x = rows
+      rows = x
 
     predictor = partial(self._predict, **{"node":self.root})
-    preds     = np.apply_along_axis(predictor, axis=1, arr=x)
+    preds     = np.apply_along_axis(predictor, axis=1, arr=rows)
 
     return preds
 
@@ -271,6 +273,7 @@ class DecisionTree:
     for parameter, value in parameters.items():
       setattr(self, parameter, value)
     return self
+
 
   def get_params(self, deep=True):
     return {"max_depth" : self.max_depth,

@@ -40,6 +40,7 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         else:
             raise NameError('Not valid cost function')
 
+
     def fit(self, X=None, y=None):
         """
         Builds the classification decsision tree by recursively splitting
@@ -52,10 +53,14 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         Parameters
         ----------
-        X DataFrame : The feature dataframe
+        X DataFrame : The feature dataframe or numpy array of features
 
         y Series : The target variables values
 
+        Returns
+        -------
+
+        Fitted model
         """
         self._fit(X, y)
 
@@ -71,6 +76,9 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         y Series : The target variables values
 
+        Returns
+        -------
+        float
         """
 
         return accuracy_score(self.predict(X),y)
@@ -107,7 +115,7 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         y_t  = y.reshape(len(y))
 
         target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
-        size           = len(y)
+        size = len(y)
 
         if size != 0:
             for target_class in target_val_cts:

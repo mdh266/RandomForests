@@ -10,6 +10,27 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import mean_squared_error
 
 class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
+    """
+    A random forest regression model that extends the abstract base class
+    of random forest.
+
+    Attributes
+    ----------
+      max_depth int :
+        The maximum depth of tree.
+
+      min_size int :
+        The minimum number of datapoints in terminal nodes.
+
+      n_features int :
+        The number of features to be used in splitting.
+
+      n_trees:
+        The number of trees in the forest
+
+      cost str :
+        The cost function
+    """
 
     def __init__(self, n_trees : int = 10, max_depth : int =2, min_size : int =1, cost : str = "mse"):
         """
@@ -31,16 +52,21 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
 
     def fit(self, X, y = None):
         """
-        Fit the random forest to the training set train.  If a test set is provided
-        then the return value wil be the predictions of the RandomForest on the
-        test set.  If no test set is provide nothing is returned.
-
+        Fit the random forest to the training set train.
 
         Note: Below we set the number of features to use in the splitting to be
         the square root of the number of total features in the dataset.
 
         Parameters
-        -----------
+        ----------
+        X DataFrame : The feature dataframe or numpy array of features
+
+        y Series : The target variables values
+
+        Returns
+        -------
+
+        Fitted model
         """
 
         n_features = round(sqrt(X.shape[1]))
@@ -51,10 +77,31 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
 
         return self
 
+    def predict(self, x : pd.DataFrame) -> int:
+        """
+        Predict the value for this sample datapoint
+
+        Parameters
+        ----------
+        x  np.ndarray:
+          The datapoints to classify.
+
+        Returns
+        --------
+          The predicted class the data points belong to.
+        """
+        if isinstance(x, np.ndarray) is False:
+            rows = x.to_numpy()
+        else:
+            rows = x
+        
+        preds = np.vstack([tree.predict(rows) for tree in self.trees])
+
+        return np.mean(preds,axis=0)
 
     def score(self, X=None, y=None):
         """
-        Returns the mean_square_error of the model
+        Returns the mean squared error of the model
 
         Parameters
         ----------
@@ -62,6 +109,9 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
 
         y Series : The target variables values
 
+        Returns
+        -------
+        float
         """
 
         return mean_squared_error(self.predict(X),y)
