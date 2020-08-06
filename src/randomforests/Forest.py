@@ -28,11 +28,10 @@ class RandomForest:
     """
 
     def __init__(self, n_trees=10, max_depth=2, min_size=1):
-        self.max_depth     = max_depth
-        self.min_size      = min_size
-        self.n_trees       = n_trees
-
-        self.trees         = None
+        self.max_depth = max_depth
+        self.min_size  = min_size
+        self.n_trees   = n_trees
+        self.trees     = None
 
     def _subsample(self, dataset : np.ndarray) -> np.ndarray:
         """
@@ -59,6 +58,7 @@ class RandomForest:
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
+
 
     def get_params(self, deep=True):
         return {"max_depth" : self.max_depth,

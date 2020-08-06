@@ -1,18 +1,17 @@
 from randomforests.utils import _make_dataset
 from randomforests.Forest import RandomForest
-from randomforests.TreeClassifier import DecisionTreeClassifier
+from randomforests.TreeRegressor import DecisionTreeRegressor
 
 from math import sqrt
 import pandas as pd
 import numpy as np
-import scipy as sp
 
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import mean_squared_error
 
-class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
+class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
     """
-    A random forest classification model that extends the abstract base class
+    A random forest regression model that extends the abstract base class
     of random forest.
 
     Attributes
@@ -33,23 +32,22 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
         The cost function
     """
 
-    def __init__(self, n_trees : int = 10, max_depth : int =2, min_size : int =1, cost : str ='gini'):
+    def __init__(self, n_trees : int = 10, max_depth : int =2, min_size : int =1, cost : str = "mse"):
         """
-        Constructor for random forest classifier. This mainly just initialize
+        Constructor for random forest regressor. This mainly just initialize
         the attributes of the class by calling the base class constructor.
         However, here is where it is the cost function string is checked
-        to make sure it either using 'gini', otherwise an error is thrown.
+        to make sure it either using 'mse', otherwise an error is thrown.
 
         """
         super().__init__(n_trees   = n_trees,
                          max_depth = max_depth,
                          min_size  = min_size)
 
-        if cost == 'gini':
-            self.cost  = "gini"
+        if cost == 'mse':
+            self.cost  = "mse"
         else:
             raise NameError('Not valid cost function')
-
 
 
     def fit(self, X, y = None):
@@ -60,7 +58,15 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
         the square root of the number of total features in the dataset.
 
         Parameters
-        -----------
+        ----------
+        X DataFrame : The feature dataframe or numpy array of features
+
+        y Series : The target variables values
+
+        Returns
+        -------
+
+        Fitted model
         """
 
         n_features = round(sqrt(X.shape[1]))
@@ -71,10 +77,9 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
 
         return self
 
-
     def predict(self, x : pd.DataFrame) -> int:
         """
-        Predict the class that this sample datapoint belongs to.
+        Predict the value for this sample datapoint
 
         Parameters
         ----------
@@ -89,15 +94,14 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
             rows = x.to_numpy()
         else:
             rows = x
+        
+        preds = np.vstack([tree.predict(rows) for tree in self.trees])
 
-        preds = [tree.predict(rows) for tree in self.trees]
-
-        return sp.stats.mode(preds)[0][0]
-
+        return np.mean(preds,axis=0)
 
     def score(self, X=None, y=None):
         """
-        Returns the accuracy of the model
+        Returns the mean squared error of the model
 
         Parameters
         ----------
@@ -105,14 +109,17 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
 
         y Series : The target variables values
 
+        Returns
+        -------
+        float
         """
 
-        return accuracy_score(self.predict(X),y)
+        return mean_squared_error(self.predict(X),y)
 
-    def _bootstrap_tree(self, dataset : np.ndarray, n_features : int) -> DecisionTreeClassifier:
+    def _bootstrap_tree(self, dataset : np.ndarray, n_features : int) -> DecisionTreeRegressor:
 
         sample = self._subsample(dataset)
-        tree   = DecisionTreeClassifier(max_depth  = self.max_depth,
-                                        min_size   = self.min_size,
-                                        n_features = n_features)
+        tree   = DecisionTreeRegressor(max_depth  = self.max_depth,
+                                       min_size   = self.min_size,
+                                       n_features = n_features)
         return tree.fit(sample[:,:-1],sample[:,-1])
