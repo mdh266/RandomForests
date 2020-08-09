@@ -11,7 +11,8 @@ I started this project to better understand the way [Decision trees](https://en.
 
 ## Examples
 
-    ## Classification
+Basic classification example using Scikit-learn:
+
     from randomforests import RandomForestClassifier
     import pandas as pd
 	from sklearn.model_selection import train_test_split
@@ -41,7 +42,9 @@ I started this project to better understand the way [Decision trees](https://en.
 
     >> Accuracy:  0.9020979020979021
 
-    ## Regression
+
+Basic regression example using Scikit-learn:
+
     from randomforests.ForestRegressor import RandomForestRegressor
     from sklearn.metrics import r2_score,
     from sklearn.datasets import load_boston
