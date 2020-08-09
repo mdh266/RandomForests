@@ -81,7 +81,7 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         float
         """
 
-        return accuracy_score(self.predict(X),y)
+        return accuracy_score(y,self.predict(X),)
 
 
     def _cost_gini(self, groups : tuple) -> float:

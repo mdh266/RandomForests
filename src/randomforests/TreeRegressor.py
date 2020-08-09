@@ -76,7 +76,7 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         float
         """
 
-        return mean_squared_error(self.predict(X),y)
+        return mean_squared_error(y,self.predict(X))
 
     def _cost_mse(self, groups : tuple) -> float:
         """

@@ -107,7 +107,7 @@ class RandomForestClassifier (BaseEstimator, ClassifierMixin, RandomForest):
 
         """
 
-        return accuracy_score(self.predict(X),y)
+        return accuracy_score(y,self.predict(X))
 
     def _bootstrap_tree(self, dataset : np.ndarray, n_features : int) -> DecisionTreeClassifier:
 
