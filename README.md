@@ -57,7 +57,7 @@ Basic regression example using Scikit-learn:
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=24)
 
-    pipe   = Pipeline([("forest", RandomForestRegressor())])#n_estimators=10,max_features="sqrt"))])
+    pipe   = Pipeline([("forest", RandomForestRegressor())])
 
     params = {"forest__max_depth": [1,2,3]}
 
