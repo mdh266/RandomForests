@@ -101,10 +101,13 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         """
         cost = 0.0
+        size = len(groups[0]) + len(groups[1])
         for group in groups:
-            cost += self._gini_index(group[:,-1])
+            split_size = len(group)
+            if split_size != 0:
+                cost += split_size * self._gini_index(group[:,-1])
 
-        return cost
+        return cost /size
 
 
     def _gini_index(self, y : np.ndarray) -> float:
@@ -117,10 +120,9 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
         size = len(y)
 
-        if size != 0:
-            for target_class in target_val_cts:
-                p = target_val_cts[target_class] / size
-                gini += p * (1 - p)
+        for target_class in target_val_cts:
+            p = target_val_cts[target_class] / size
+            gini += p * (1 - p)
 
         return gini
 

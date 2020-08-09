@@ -38,10 +38,10 @@ def test_default_getparams():
 
 mse_cost_tests =[ ((np.array([[0.],[0.], [0.],[0.]]),
                     np.array([[0.],[0.], [1.],[1.]])),
-                   0.25),
+                   0.125),
                    ((np.array([[0.],[1.], [0.],[0.]]),
                     np.array([[0.],[0.], [0.],[1.]])),
-                   0.374999999)
+                   0.1874999995)
                   ]
 
 @pytest.mark.parametrize('groups, expected', mse_cost_tests)

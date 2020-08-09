@@ -33,10 +33,10 @@ def test_gini_index(y, expected):
 
 gini_cost_tests =[ ((np.array([[0.],[0.], [0.],[0.]]),
                      np.array([[0.],[0.], [1.],[1.]])),
-                     0.5),
+                     0.25),
                    ((np.array([[0.],[1.], [0.],[0.]]),
                     np.array([[0.],[0.], [0.],[1.]])),
-                     0.75)
+                     0.375)
 ]
 
 @pytest.mark.parametrize('groups, expected', gini_cost_tests)

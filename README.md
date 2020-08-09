@@ -11,8 +11,10 @@
 -------------
 I started this project to better understand the way [Decision trees](https://en.wikipedia.org/wiki/Decision_tree) and [random forests](https://en.wikipedia.org/wiki/Random_forest) work. At this point the classifiers are only based off the gini-index and the regression models are based off the mean square error. Both the classifiers and regression models are built to work with [Pandas](http://pandas.pydata.org) and [Scikit-Learn](https://scikit-learn.org/)
 
-## Example
-    from randomforests.ForestClassifier import RandomForestClassifier
+## Examples
+
+    ## Classification
+    from randomforests import RandomForestClassifier
     import pandas as pd
 	from sklearn.model_selection import train_test_split
 	from sklearn.model_selection import GridSearchCV
@@ -39,7 +41,33 @@ I started this project to better understand the way [Decision trees](https://en.
 
     print("Accuracy: ", accuracy_score(preds, y_test))
 
-    >> Accuracy:  0.8531468531468531
+    >> Accuracy:  0.9020979020979021
+
+    ## Regression
+    from randomforests.ForestRegressor import RandomForestRegressor
+    from sklearn.metrics import r2_score,
+    from sklearn.datasets import load_boston
+    dataset = load_boston()
+
+    cols = [dataset.data[:,i] for i in range(4)]
+
+    X = pd.DataFrame({k:v for k,v in zip(dataset.feature_names,cols)})
+    y = pd.Series(dataset.target)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=24)
+
+    pipe   = Pipeline([("forest", RandomForestRegressor())])#n_estimators=10,max_features="sqrt"))])
+
+    params = {"forest__max_depth": [1,2,3]}
+
+    grid   = GridSearchCV(pipe, params, cv=5, n_jobs=-1)
+    model  = grid.fit(X,y)
+
+    preds  = model.predict(X_test)
+
+    print("R^2 : ", r2_score(y_test,preds))
+
+    >> R^2 : 0.37948488681649484
 
 ## Installing
 -----------------

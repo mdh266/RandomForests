@@ -31,6 +31,7 @@ class RandomForest:
         self.max_depth = max_depth
         self.min_size  = min_size
         self.n_trees   = n_trees
+        self.cost      = None
         self.trees     = None
 
     def _subsample(self, dataset : np.ndarray) -> np.ndarray:

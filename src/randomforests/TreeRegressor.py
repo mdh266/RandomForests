@@ -96,12 +96,14 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         """
         cost = 0.0
+        size = len(groups[0]) + len(groups[1])
         for group in groups:
-            if len(group) > 0:
-                cost += np.std(group[:,-1]) ** 2
+            split_size = len(group)
+            if split_size > 0:
+                cost += split_size * np.var(group[:,-1])
             else:
                 continue
-        return cost
+        return cost / size
 
     def _make_leaf(self, y : np.ndarray) -> float :
         """

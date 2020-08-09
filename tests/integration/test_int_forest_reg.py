@@ -65,6 +65,6 @@ def test_predict(y):
     correct_size  = len(preds) == 4
 
     bounded_max   = np.max(preds) <= 0.9
-    bounded_in    = np.min(preds) >= 0.1
+    bounded_min   = np.min(preds) >= 0.1
 
-    assert correct_size and bounded_in and bounded_max
+    assert correct_size and bounded_min and bounded_max
