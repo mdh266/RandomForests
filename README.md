@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/mdh266/RandomForests.svg?branch=master)](https://travis-ci.com/mdh266/RandomForests)
 [![codecov](https://codecov.io/gh/mdh266/RandomForests/branch/master/graph/badge.svg)](https://codecov.io/gh/mdh266/RandomForests)
-[![HitCount](http://hits.dwyl.com/mdh266/RandomForests.svg)](http://hits.dwyl.com/mdh266/RandomForests)
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
 # Random Forests In Python
 --------------
