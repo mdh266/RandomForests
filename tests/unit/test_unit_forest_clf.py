@@ -1,5 +1,5 @@
 import pytest
-from randomforests.ForestClassifier import RandomForestClassifier
+from randomforests import RandomForestClassifier
 
 
 

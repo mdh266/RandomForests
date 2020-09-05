@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import pandas as pd
-from randomforests.TreeClassifier import DecisionTreeClassifier
+from randomforests import DecisionTreeClassifier
 
 
 get_split_tests = [

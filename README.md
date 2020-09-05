@@ -45,7 +45,7 @@ Basic classification example using Scikit-learn:
 
 Basic regression example using Scikit-learn:
 
-    from randomforests.ForestRegressor import RandomForestRegressor
+    from randomforests import RandomForestRegressor
     from sklearn.metrics import r2_score,
     from sklearn.datasets import load_boston
     dataset = load_boston()

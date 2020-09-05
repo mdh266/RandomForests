@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from randomforests.TreeRegressor import DecisionTreeRegressor
+from randomforests import DecisionTreeRegressor
 
 def test__get_split():
     tree      = DecisionTreeRegressor(n_features = 1)

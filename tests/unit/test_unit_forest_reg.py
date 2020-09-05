@@ -1,5 +1,5 @@
 import pytest
-from randomforests.ForestRegressor import RandomForestRegressor
+from randomforests import RandomForestRegressor
 
 
 def test_default():

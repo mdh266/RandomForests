@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 from randomforests.utils import _make_dataset
-from randomforests.ForestClassifier import RandomForestClassifier
+from randomforests import RandomForestClassifier
 
 
 def test_make_bootsrap():
