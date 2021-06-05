@@ -6,7 +6,8 @@ from sklearn.metrics import accuracy_score
 
 from randomforests.Tree import DecisionTree
 
-class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
+
+class DecisionTreeClassifier(BaseEstimator, ClassifierMixin, DecisionTree):
     """
     A decision tree classifier that extends the DecisionTree class.
 
@@ -28,18 +29,21 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         The cost function
     """
 
-    def __init__(self, max_depth : int = 2, min_size : int = 1, n_features : int= None, cost : str ='gini'):
+    def __init__(
+        self,
+        max_depth: int = 2,
+        min_size: int = 1,
+        n_features: int = None,
+        cost: str = "gini",
+    ):
 
-        super().__init__(max_depth  = max_depth,
-                         min_size   = min_size,
-                         n_features = n_features)
+        super().__init__(max_depth=max_depth, min_size=min_size, n_features=n_features)
 
-        if cost == 'gini':
-            self.cost  = "gini"
+        if cost == "gini":
+            self.cost = "gini"
             self._cost = self._cost_gini
         else:
-            raise NameError('Not valid cost function')
-
+            raise NameError("Not valid cost function")
 
     def fit(self, X=None, y=None):
         """
@@ -81,10 +85,12 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         float
         """
 
-        return accuracy_score(y,self.predict(X),)
+        return accuracy_score(
+            y,
+            self.predict(X),
+        )
 
-
-    def _cost_gini(self, groups : tuple) -> float:
+    def _cost_gini(self, groups: tuple) -> float:
         """
         Get the cost of the spit of the dataframe. Groups
         will be the tuple containing the left and right
@@ -105,17 +111,16 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         for group in groups:
             split_size = len(group)
             if split_size != 0:
-                cost += split_size * self._gini_index(group[:,-1])
+                cost += split_size * self._gini_index(group[:, -1])
 
-        return cost /size
+        return cost / size
 
-
-    def _gini_index(self, y : np.ndarray) -> float:
+    def _gini_index(self, y: np.ndarray) -> float:
         """
         Gini index for a single target vector.
         """
         gini = 0.0
-        y_t  = y.reshape(len(y))
+        y_t = y.reshape(len(y))
 
         target_val_cts = dict(zip(*np.unique(y_t, return_counts=True)))
         size = len(y)
@@ -126,7 +131,7 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
 
         return gini
 
-    def _make_leaf(self, y : np.ndarray) -> float :
+    def _make_leaf(self, y: np.ndarray) -> float:
         """
         Makest the leaf of the tree by taking the value of the class
         that has the largest size.
@@ -140,6 +145,6 @@ class DecisionTreeClassifier (BaseEstimator, ClassifierMixin, DecisionTree ):
         The leaf value.
 
         """
-        y_t  = y.reshape(len(y))
+        y_t = y.reshape(len(y))
 
         return sp.stats.mode(y_t)[0][0]

@@ -9,7 +9,8 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import mean_squared_error
 
-class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
+
+class RandomForestRegressor(BaseEstimator, ClassifierMixin, RandomForest):
     """
     A random forest regression model that extends the abstract base class
     of random forest.
@@ -32,7 +33,13 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
         The cost function
     """
 
-    def __init__(self, n_trees : int = 10, max_depth : int =2, min_size : int =1, cost : str = "mse"):
+    def __init__(
+        self,
+        n_trees: int = 10,
+        max_depth: int = 2,
+        min_size: int = 1,
+        cost: str = "mse",
+    ):
         """
         Constructor for random forest regressor. This mainly just initialize
         the attributes of the class by calling the base class constructor.
@@ -40,17 +47,14 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
         to make sure it either using 'mse', otherwise an error is thrown.
 
         """
-        super().__init__(n_trees   = n_trees,
-                         max_depth = max_depth,
-                         min_size  = min_size)
+        super().__init__(n_trees=n_trees, max_depth=max_depth, min_size=min_size)
 
-        if cost == 'mse':
-            self.cost  = "mse"
+        if cost == "mse":
+            self.cost = "mse"
         else:
-            raise NameError('Not valid cost function')
+            raise NameError("Not valid cost function")
 
-
-    def fit(self, X, y = None):
+    def fit(self, X, y=None):
         """
         Fit the random forest to the training set train.
 
@@ -70,14 +74,15 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
         """
 
         n_features = round(sqrt(X.shape[1]))
-        dataset    = _make_dataset(X,y)
-        self.trees = [self._bootstrap_tree(dataset    = dataset,
-                                           n_features = n_features)
-                      for i in range(self.n_trees)]
+        dataset = _make_dataset(X, y)
+        self.trees = [
+            self._bootstrap_tree(dataset=dataset, n_features=n_features)
+            for i in range(self.n_trees)
+        ]
 
         return self
 
-    def predict(self, x : pd.DataFrame) -> int:
+    def predict(self, x: pd.DataFrame) -> int:
         """
         Predict the value for this sample datapoint
 
@@ -94,10 +99,10 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
             rows = x.to_numpy()
         else:
             rows = x
-        
+
         preds = np.vstack([tree.predict(rows) for tree in self.trees])
 
-        return np.mean(preds,axis=0)
+        return np.mean(preds, axis=0)
 
     def score(self, X=None, y=None):
         """
@@ -114,12 +119,14 @@ class RandomForestRegressor (BaseEstimator, ClassifierMixin, RandomForest):
         float
         """
 
-        return mean_squared_error(y,self.predict(X))
+        return mean_squared_error(y, self.predict(X))
 
-    def _bootstrap_tree(self, dataset : np.ndarray, n_features : int) -> DecisionTreeRegressor:
+    def _bootstrap_tree(
+        self, dataset: np.ndarray, n_features: int
+    ) -> DecisionTreeRegressor:
 
         sample = self._subsample(dataset)
-        tree   = DecisionTreeRegressor(max_depth  = self.max_depth,
-                                       min_size   = self.min_size,
-                                       n_features = n_features)
-        return tree.fit(sample[:,:-1],sample[:,-1])
+        tree = DecisionTreeRegressor(
+            max_depth=self.max_depth, min_size=self.min_size, n_features=n_features
+        )
+        return tree.fit(sample[:, :-1], sample[:, -1])
