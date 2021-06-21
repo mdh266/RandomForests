@@ -6,8 +6,8 @@ before_install:
 - pip install pytest-cov==2.10.0
 - pip install codecov==2.1.8
 install:
-- pip install .
+- python setup.py install
 script:
-- pytest src 
+- python setup.py test 
 after_success:
 - codecov
