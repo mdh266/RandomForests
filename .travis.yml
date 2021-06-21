@@ -1,8 +1,6 @@
 language: python
 python:
-- "3.6"
 - "3.7"
-- "3.8"
 before_install:
 - pip install pytest==5.4.3
 - pip install pytest-cov==2.10.0
@@ -10,6 +8,6 @@ before_install:
 install:
 - pip install .
 script:
-- pytest
+- pytest src 
 after_success:
 - codecov
