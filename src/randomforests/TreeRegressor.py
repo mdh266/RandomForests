@@ -5,7 +5,8 @@ from sklearn.metrics import mean_squared_error
 
 from randomforests.Tree import DecisionTree
 
-class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
+
+class DecisionTreeRegressor(BaseEstimator, ClassifierMixin, DecisionTree):
     """
     A decision tree regressor that extends the DecisionTree class.
 
@@ -27,15 +28,12 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
          The root dictionary for the tree
     """
 
-    def __init__(self, max_depth : int = 2, min_size : int = 1, n_features : int = None):
+    def __init__(self, max_depth: int = 2, min_size: int = 1, n_features: int = None):
 
-        super().__init__(max_depth  = max_depth,
-                         min_size   = min_size,
-                         n_features = n_features)
+        super().__init__(max_depth=max_depth, min_size=min_size, n_features=n_features)
 
-        self.cost  = "mse"
+        self.cost = "mse"
         self._cost = self._cost_mse
-
 
     def fit(self, X=None, y=None):
         """
@@ -76,9 +74,9 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         float
         """
 
-        return mean_squared_error(y,self.predict(X))
+        return mean_squared_error(y, self.predict(X))
 
-    def _cost_mse(self, groups : tuple) -> float:
+    def _cost_mse(self, groups: tuple) -> float:
         """
         Get the cost of the spit of the dataframe. Groups will be the tuple
         containing the left and right splits. The cost is the mean square error,
@@ -100,12 +98,12 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         for group in groups:
             split_size = len(group)
             if split_size > 0:
-                cost += split_size * np.var(group[:,-1])
+                cost += split_size * np.var(group[:, -1])
             else:
                 continue
         return cost / size
 
-    def _make_leaf(self, y : np.ndarray) -> float :
+    def _make_leaf(self, y: np.ndarray) -> float:
         """
         Makes the leaf of the tree by taking the mean of the target values
 
@@ -121,5 +119,3 @@ class DecisionTreeRegressor (BaseEstimator, ClassifierMixin, DecisionTree ):
         y_t = y.reshape(len(y))
 
         return np.mean(y_t)
-
-

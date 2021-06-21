@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class RandomForest:
     """
     A Random Forest base class.
@@ -29,12 +30,12 @@ class RandomForest:
 
     def __init__(self, n_trees=10, max_depth=2, min_size=1):
         self.max_depth = max_depth
-        self.min_size  = min_size
-        self.n_trees   = n_trees
-        self.cost      = None
-        self.trees     = None
+        self.min_size = min_size
+        self.n_trees = n_trees
+        self.cost = None
+        self.trees = None
 
-    def _subsample(self, dataset : np.ndarray) -> np.ndarray:
+    def _subsample(self, dataset: np.ndarray) -> np.ndarray:
         """
         This function returns a bootstrapped version of the dataset which
         has the same number of rows.
@@ -50,20 +51,20 @@ class RandomForest:
 
         number_of_rows = dataset.shape[0]
         sample_of_rows = number_of_rows
-        random_indices = np.random.choice(number_of_rows,
-                                          size=sample_of_rows,
-                                          replace=True)
-        return dataset[random_indices,:]
+        random_indices = np.random.choice(
+            number_of_rows, size=sample_of_rows, replace=True
+        )
+        return dataset[random_indices, :]
 
     def set_params(self, **parameters):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
 
-
     def get_params(self, deep=True):
-        return {"max_depth" : self.max_depth,
-                "min_size"  : self.min_size,
-                "cost"      : self.cost,
-                "n_trees"   : self.n_trees}
-
+        return {
+            "max_depth": self.max_depth,
+            "min_size": self.min_size,
+            "cost": self.cost,
+            "n_trees": self.n_trees,
+        }
